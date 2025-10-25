@@ -1,0 +1,117 @@
+/* Reusing styles from modal-inbox.css for consistency */
+@import './modal-inbox.css';
+
+.message-detail-header {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.message-detail-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--text-primary);
+}
+
+.message-detail-header small {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+}
+
+.message-detail-body {
+    line-height: 1.7;
+    color: var(--text-secondary);
+    white-space: pre-wrap; /* Respects newlines in the message body */
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.details-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.back-to-list-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--brand-primary);
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.details-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    margin-top: auto; /* Pushes footer to the bottom */
+}
+
+.delete-message-btn {
+    background: #fee2e2;
+    color: #dc2626;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.delete-message-btn:hover {
+    background: #fecaca;
+}
+
+.no-items-placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 2rem;
+    gap: 1rem;
+}
+
+.message-item.unread .message-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.message-item.unread .message-subtitle {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.message-item .message-title {
+    font-weight: 500;
+}
+
+.message-item .message-subtitle {
+    font-weight: 400;
+}
+
+.inbox-modal-content .close-btn {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.inbox-modal-content .close-btn:hover {
+    background: #e5e7eb;
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}

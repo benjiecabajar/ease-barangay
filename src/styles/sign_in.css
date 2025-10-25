@@ -1,0 +1,313 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  font-family: "Poppins";
+}
+
+.sign-page {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  background: linear-gradient(rgba(46,48,174,0.45), rgba(46,48,174,0.45)),
+              url("../assets/bg.jpg") center/cover no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  justify-content: flex-end; 
+  align-items: center;      
+}  
+
+.sign-box {
+  margin-left: 50px;
+  background: rgba(242,242,245,0.80);
+  padding: 5rem 2.5rem;
+  height: 900px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sign-box h1 {
+  font-size: 35px;
+  text-align: left;
+  color: #111;
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+  margin: 0 0 -65px 2px;
+}
+
+.sign-box h2 {
+  font-size: 60px;
+  text-align: left;
+  color: #0d47a1;
+  font-family: "Tahoma", sans-serif;
+  font-weight: bold;
+  margin: 5px 0 30px 5px;
+}
+
+.sign-box h3 {
+  font-size: 15px;
+  text-align: left;
+  color: #202020;
+  margin: 10px 0 20px 40px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+}
+
+.selector-container {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.role-selector {
+  border: 2px solid #a5a6cc;
+  border-radius: 12px;
+  font-size: 14px;
+  height: 135px;
+  width: 135px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  background-color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;  
+  align-items: center;     
+  justify-content: center; 
+  gap: 0.6rem; 
+  color: #111;
+  transition: all 0.3s ease-in-out;
+}
+
+.role-selector.selected {
+  border-color: #0d47a1;
+  background-color: #eef2ff;
+  transform: scale(1.05);
+}
+
+.info-inputs input:focus {
+  background: #fff;
+  border: 2.4px solid #0d47a1;   /* blue border when typing */
+  box-shadow: 0 0 8px rgba(46, 48, 174, 0.3);  /* glowing effect */
+}
+
+
+.info-label {
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 80px 6px;
+  color: #111;
+  font-family: "Poppins";
+}
+
+.info-inputs {
+  position: relative;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.name-column {
+  display: flex;
+  flex-direction: row; 
+  gap: 0.75rem;
+  width: 70%;
+  max-width: 420px;
+}
+
+.info-inputs input {
+  width: 65%;
+  max-width: 420px;
+  padding: 12px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #e4e5ec;
+  font-size: 14px;
+  font-family: "Poppins";
+  outline: none;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+              inset -2px -2px 5px rgba(255, 255, 255, 0.6);
+  transition: all 0.15s ease;
+}
+
+.extra-info {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  width: 70%;
+  max-width: 420px;
+}
+
+.extra-info label {
+  display: none; /* hide plain labels since placeholders handle clarity */
+}
+
+.extra-info input,
+.extra-info select {
+  flex: 1;
+  padding: 12px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #e4e5ec;
+  font-size: 14px;
+  font-family: "Poppins";
+  outline: none;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+              inset -2px -2px 5px rgba(255, 255, 255, 0.6);
+  transition: all 0.15s ease;
+}
+
+.extra-info input:focus,
+.extra-info select:focus {
+  background: #fff;
+  border: 1px solid #0d47a1;
+  box-shadow: 0 0 8px rgba(46, 48, 174, 0.3);
+}
+
+
+.signin-btn {
+  margin-top: 20px;       /* keep some space */
+  align-self: center;     /* keeps it centered horizontally */
+  width: 70%;
+  padding: 12px;
+  background: #0d47a1;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+.signin-btn:hover {
+  background: #0d47a1;
+  transform: translateY(-3px);
+}
+
+
+.info-inputs select {
+  width: 70%;
+  max-width: 420px;
+  padding: 12px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #e4e5ec;
+  font-size: 14px;
+  font-family: "Poppins";
+  outline: none;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+              inset -2px -2px 5px rgba(255, 255, 255, 0.6);
+  transition: all 0.15s ease;
+  margin-top: 0.5rem;
+}
+
+.info-inputs select:focus {
+  background: #fff;
+  border: 1px solid #0d47a1;
+  box-shadow: 0 0 8px rgba(46, 48, 174, 0.3);
+}
+.signup-text {
+  margin-top: 15px;    /* just a small gap */
+  text-align: center;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+}
+
+
+.signup-text a {
+  color: #0d47a1;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+/* --- NEW: Success Confirmation Styles --- */
+.success-confirmation {
+  text-align: center;
+  padding: 40px;
+}
+
+.success-confirmation h1 {
+  color: #22c55e; /* Green */
+  margin-bottom: 10px;
+}
+
+.success-icon {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 20px;
+  animation: popIn 0.5s cubic-bezier(0.25, 0.25, 0.25, 1.25);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.confirmation-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.confirmation-text strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Styling for inputs with errors (to turn the border red) */
+.error-input {
+  /* Change the border color to red */
+  border: 1px solid #e74c3c !important; /* A common red color, use !important if other styles override */
+}
+
+/* Styling for the notification message (to make the text red and centered) */
+.notification {
+  /* Ensure the text color is red */
+  color: #e74c3c;
+  
+  /* ADD THIS LINE to center the text horizontally */
+  text-align: center;
+  
+  /* Add padding or margin for visibility */
+  margin-top: 10px;
+  font-weight: 500; /* Make it stand out a bit */
+  padding: 5px; /* Optional: Add a little padding around the text */
+}
+
+.success-message {
+  color: #16a34a;
+  /* Similar styling as error-message but with green colors */
+}
+
+.input-error {
+  border: 1px solid red !important;
+}
+
+.terms-container {
+  display: flex;
+  font-size: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 0.20rem 0;
+}

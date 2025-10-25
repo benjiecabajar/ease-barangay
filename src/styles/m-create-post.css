@@ -1,0 +1,204 @@
+/* ======================================================== */
+/* CREATE POST MODAL STYLES - MODERNIZED COMPONENTS */
+/* ======================================================== */
+
+.post-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeInOverlay 0.35s ease forwards;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(10px); }
+}
+
+.post-modal-content {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 24px;
+  width: 620px; 
+  margin-top: 50px;
+  max-width: 90vw;
+  max-height: 77vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideUpModal 0.4s ease forwards;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUpModal {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* KEEP HEADER SAME */
+.post-modal-content .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.post-modal-content .modal-header h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: var(--brand-primary);
+}
+
+.post-modal-content .close-btn {
+  position: static;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.25s ease;
+}
+.post-modal-content .close-btn:hover {
+  background: #e5e7eb;
+  color: var(--text-primary);
+  transform: rotate(90deg);
+}
+
+/* === MODERNIZED FORM === */
+.post-modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 5px; /* Space for scrollbar */
+}
+
+/* INPUTS */
+.post-modal-content input[type="text"],
+.post-modal-content textarea {
+  width: 95%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 0 0 transparent;
+}
+
+.post-modal-content input[type="text"]:focus,
+.post-modal-content textarea:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 2px var(--brand-primary);
+  background: rgba(255,255,255,0.08);
+}
+
+/* FILE UPLOAD (modern dashed glassy look) */
+.file-upload-label {
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 15px;
+  border: 1.5px dashed var(--border-secondary);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
+}
+
+.file-upload-label:hover {
+  border-color: var(--brand-primary);
+  background: rgba(59,130,246,0.08);
+  color: var(--brand-primary);
+}
+
+.file-upload-label svg {
+  color: var(--brand-primary);
+  font-size: 18px;
+}
+
+/* BUTTON */
+.post-modal-content button[type="submit"] {
+  width: 100%;
+  background: linear-gradient(135deg, var(--brand-primary), #2563eb);
+  color: #fff;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto; /* Push to bottom */
+  box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+}
+
+.post-modal-content button[type="submit"]:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37,99,235,0.4);
+}
+
+.post-modal-content button[type="submit"]:disabled {
+  background: var(--text-tertiary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* IMAGE PREVIEW */
+.preview-image-container {
+  position: relative;
+  /* width: 90%; */ /* Let the grid handle it */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.remove-preview-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+.preview-image-container:hover .remove-preview-btn {
+  opacity: 1;
+}
+
+.remove-preview-btn:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
