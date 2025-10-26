@@ -53,7 +53,7 @@
 .post-modal-content .modal-header h2 {
   font-size: 1.3rem;
   font-weight: 700;
-  margin-top: 10px;
+  margin-top: -10px;
   margin-bottom: 10px;
   color: var(--brand-primary);
 }
@@ -63,6 +63,7 @@
   background: var(--bg-secondary);
   color: var(--text-secondary);
   border: none;
+  margin-top: -20px;
   border-radius: 50%;
   width: 32px;
   height: 32px;

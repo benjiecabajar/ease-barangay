@@ -174,17 +174,16 @@ function Home() {
   const [events, setEvents] = useState(() => JSON.parse(localStorage.getItem('calendarEvents')) || []);
   const [inboxMessages, setInboxMessages] = useState(() => JSON.parse(localStorage.getItem('residentInbox')) || []);
   const [isInboxModalOpen, setIsInboxModalOpen] = useState(false);
+  const [recentlyDeletedMessage, setRecentlyDeletedMessage] = useState(null);
+  const [undoTimeoutId, setUndoTimeoutId] = useState(null);
+  const [recentlyClearedItems, setRecentlyClearedItems] = useState(null); // For Clear All
+  const [undoClearTimeoutId, setUndoClearTimeoutId] = useState(null);
+  const [notificationClearStatus, setNotificationClearStatus] = useState(null);
+  const [inboxClearStatus, setInboxClearStatus] = useState(null);
 
   // State for the new event view modal
   const [isViewEventsModalOpen, setIsViewEventsModalOpen] = useState(false);
   const [eventsForModal, setEventsForModal] = useState([]);
-
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [modalImages, setModalImages] = useState([]);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [sortOrder, setSortOrder] = useState('newest');
-  const [filterCategory, setFilterCategory] = useState('All');
 
   const POST_CATEGORIES = [
       'General', 'Event', 'Health Advisory', 'Safety Alert', 
@@ -193,6 +192,13 @@ function Home() {
   ];
 
   const navigate = useNavigate();
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [modalImages, setModalImages] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [filterCategory, setFilterCategory] = useState('All');
+
 
   const getCategoryClass = (categoryName) => {
     if (!categoryName) return 'category-general';
@@ -517,7 +523,7 @@ function Home() {
         setTimeout(() => {
             const newRequest = {
                 ...requestData,
-                id: Date.now(),
+                id: `cert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 date: Date.now(),
                 status: "Pending",
                 requester: "Benjie Cabajar", // Placeholder
@@ -592,15 +598,20 @@ function Home() {
 
   const handleClearNotifications = () => {
     if (window.confirm("Are you sure you want to clear all notifications?")) {
-        setNotifications([]);
-        localStorage.setItem('notifications', JSON.stringify([]));
+        setNotificationClearStatus('clearing');
+        setTimeout(() => {
+            setNotifications([]);
+            setNotificationClearStatus('success');
+            setTimeout(() => {
+                setNotificationClearStatus(null);
+                setIsNotificationModalOpen(false);
+            }, 1000);
+        }, 1500);
     }
   };
 
   const handleDeleteNotification = (notificationId) => {
-    if (window.confirm("Are you sure you want to delete this notification?")) {
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    }
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
   };
 
   const handleMarkAsRead = (messageId) => {
@@ -611,8 +622,21 @@ function Home() {
   };
 
   const handleDeleteMessage = (messageId) => {
-    const updatedMessages = inboxMessages.filter(msg => msg.id !== messageId);
-    setInboxMessages(updatedMessages);
+    if (window.confirm("Are you sure you want to delete this message?")) {
+        const updatedMessages = inboxMessages.filter(msg => msg.id !== messageId);
+        setInboxMessages(updatedMessages);
+    }
+  };
+
+  const handleClearInbox = () => {
+    if (window.confirm("Are you sure you want to clear all messages from your inbox?")) {
+        setInboxClearStatus('clearing');
+        setTimeout(() => {
+            setInboxMessages([]);
+            setInboxClearStatus(null);
+            setIsInboxModalOpen(false);
+        }, 1000);
+    }
   };
 
 
@@ -841,6 +865,7 @@ function Home() {
         notifications={notifications}
         onClear={handleClearNotifications}
         onDelete={handleDeleteNotification}
+        submissionStatus={notificationClearStatus}
       />
 
       <SupportModal
@@ -873,8 +898,9 @@ function Home() {
         messages={inboxMessages}
         onMarkAsRead={handleMarkAsRead}
         onDelete={handleDeleteMessage}
+        onClearAll={handleClearInbox}
+        submissionStatus={inboxClearStatus}
       />
-
 
       {/* ✅ Using your Header.jsx */}
       <Header/>

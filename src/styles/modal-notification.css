@@ -27,12 +27,12 @@
 .notification-modal-content {
     background: var(--bg-primary);
     border-radius: 16px;
-    padding: 20px 24px;
-    width: 600px;
-    height: 1000px;
+    padding: 20px 0 0 0; /* Remove bottom and side padding */
+    width: 700px;
     margin-top: 50px;
-    max-width: 100vw;
-    max-height: 80vh;
+    max-width: 700px;
+    height: 80vh;
+    max-height: 700px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
@@ -76,12 +76,16 @@
     justify-content: space-between;
     align-items: center;
     padding-bottom: 12px;
+    padding-left: 24px; /* Add padding back to header */
+    padding-right: 24px;
     border-bottom: 1px solid var(--border-primary);
 }
 
 .notification-modal-content .modal-header h2 {
     font-size: 1.3rem;
     font-weight: 700;
+    margin-top: -10px;
+    margin-bottom: 10px;
     color: var(--brand-primary);
 }
 
@@ -92,7 +96,7 @@
     border-radius: 50%;
     width: 32px;
     height: 32px;
-    top: 30px;
+    top: 25px;
     right: 30px;
     cursor: pointer;
     display: flex;
@@ -111,7 +115,8 @@
     flex-grow: 1;
     overflow-y: auto;
     margin-top: 1rem;
-    padding-right: 10px;
+    padding-right: 14px; /* Adjust for scrollbar */
+    padding-left: 24px; /* Match original content padding */
 }
 
 .notification-body.no-scroll {
@@ -169,13 +174,13 @@
 }
 .notification-details .message {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 14px; /* Match inbox message title */
     color: var(--text-primary);
     line-height: 1.5;
 }
 
 .notification-details .date {
-    font-size: 0.8rem;
+    font-size: 13px; /* Match inbox message date */
     color: var(--text-secondary);
     margin-top: 4px;
 }
@@ -221,29 +226,31 @@
 }
 
 .notification-modal-content .modal-footer {
-    padding-top: 1rem;
-    margin-top: 1rem;
+    padding: 15px 24px; /* Match original content padding */
     border-top: 1px solid var(--border-primary);
     display: flex;
     justify-content: flex-end;
+    background-color: var(--bg-secondary); /* Negative margin to break out of padding (no longer needed but good practice) */
+    border-bottom-left-radius: 16px; /* Match parent border-radius */
+    border-bottom-right-radius: 16px;
 }
 
 .clear-all-btn {
-    background: none;
+    background: #ef4444; /* Red */
+    color: white;
     border: none;
-    color: var(--brand-primary);
-    font-weight: 600;
-    cursor: pointer;
-    padding: 8px 12px;
+    padding: 8px 16px;
     border-radius: 8px;
-    transition: background-color 0.2s;
-
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
 }
 
 .clear-all-btn:hover {
-    background-color: var(--bg-secondary);
-
-
+    background: #dc2626; /* Darker red */
 }
 
 /* Notification Badge on Bell Icon */

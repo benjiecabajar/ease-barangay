@@ -18,19 +18,19 @@ const ReviewCertsModal = ({ isOpen, onClose, requests, onUpdateStatus, onDeleteR
     const [activeTab, setActiveTab] = useState('Pending');
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('All');
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [loadingAction, setLoadingAction] = useState(null); // null, 'approving', 'declining', 'deleting'
 
     if (!isOpen) return null;
 
     const handleStatusUpdate = (newStatus) => {
         if (selectedRequest) {
-            const action = newStatus.toLowerCase();
+            const action = newStatus === 'Approved' ? 'approve' : 'decline';
             if (window.confirm(`Are you sure you want to ${action} this request?`)) {
-                setIsUpdating(true);
+                setLoadingAction(action); // 'approve' or 'decline'
                 // Simulate API call
                 setTimeout(() => {
                     onUpdateStatus(selectedRequest.id, newStatus);
-                    setIsUpdating(false);
+                    setLoadingAction(null);
 
                     // After updating the status, go back to the list view
                     // to reflect that the item has moved out of the "Pending" queue.
@@ -46,8 +46,15 @@ const ReviewCertsModal = ({ isOpen, onClose, requests, onUpdateStatus, onDeleteR
 
     const handleDeleteClick = () => {
         if (selectedRequest) {
-            onDeleteRequest(selectedRequest.id);
-            setSelectedRequest(null); // Go back to the list view
+            if (window.confirm("Are you sure you want to permanently delete this request?")) {
+                setLoadingAction('deleting');
+                // Simulate API call
+                setTimeout(() => {
+                    onDeleteRequest(selectedRequest.id);
+                    setLoadingAction(null);
+                    setSelectedRequest(null); // Go back to the list view
+                }, 1500);
+            }
         }
     };
 
@@ -88,6 +95,16 @@ const ReviewCertsModal = ({ isOpen, onClose, requests, onUpdateStatus, onDeleteR
             <div className="view-certs-modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2>{selectedRequest ? "Review Certificate Request" : "Certificate Requests"}</h2>
+                    {loadingAction && (
+                        <div className="submission-overlay">
+                            <div className="spinner"></div>
+                            <p>
+                                {loadingAction === 'approve' && 'Approving Request...'}
+                                {loadingAction === 'decline' && 'Declining Request...'}
+                                {loadingAction === 'deleting' && 'Deleting Request...'}
+                            </p>
+                        </div>
+                    )}
                     <button className="close-btn" onClick={onClose}><FaTimes size={20} /></button>
                 </div>
 
@@ -149,19 +166,14 @@ const ReviewCertsModal = ({ isOpen, onClose, requests, onUpdateStatus, onDeleteR
                     ) : (
                         // Detail View
                         <div className="details-body">
-                            {isUpdating && (
-                                <div className="submission-overlay-global active">
-                                    <div className="submission-content">
-                                        <div className="spinner"></div>
-                                        <p>Updating Status...</p>
-                                    </div>
-                                </div>
-                            )}
-
                             <button className="back-to-list-btn" onClick={() => setSelectedRequest(null)}>
                                 <FaChevronLeft /> Back to List
                             </button>
-                            <p><strong>Requester:</strong> {selectedRequest.requester}</p>
+                            {selectedRequest.details && (
+                                <p>
+                                    <strong>Requester Name:</strong> {`${selectedRequest.details.firstName} ${selectedRequest.details.middleName || ''} ${selectedRequest.details.lastName}`.trim()}
+                                </p>
+                            )}
                             <p><strong>Certificate Type:</strong> {selectedRequest.type}</p>
                             <p><strong>Purpose:</strong> {selectedRequest.purpose}</p>
                             <p><strong>Date Requested:</strong> {new Date(selectedRequest.date).toLocaleString()}</p>
@@ -246,7 +258,9 @@ const CertCard = ({ req, onClick }) => (
             <h3>{req.type}</h3>
             <FaEye className="view-icon" />
         </div>
-        <p className="cert-card-requester">Requester: {req.requester}</p>
+        <p className="cert-card-requester">
+            Requester: {req.details ? `${req.details.firstName} ${req.details.lastName}` : req.requester}
+        </p>
         <div className="cert-card-footer">
             <StatusBadge status={req.status} />
             <small className="cert-date">

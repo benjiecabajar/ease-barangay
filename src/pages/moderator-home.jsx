@@ -10,8 +10,8 @@ import ReviewCertsModal from "../components/m-review-certs.jsx";
 import ReportUserModal from "../components/m-report-user-modal.jsx";
 import SupportModal from "../components/m-support-modal.jsx";
 import AnalyticsDashboard from "../components/m-analytics-dashboard.jsx";
-import ModeratorInboxModal from "../components/m-inbox-modal.jsx";
 import "../styles/m-create-post.css";
+import ModeratorInboxModal from "../components/m-inbox-modal.jsx";
 import ReviewReportModal from "../components/m-review-report.jsx"; // Import the new modal
 import PostModal from "../components/m-create-post.jsx";
 import NotificationModal from "../components/modal-notification.jsx";
@@ -23,6 +23,7 @@ import SettingModal from "../components/modal-settings.jsx";
 import { ThemeProvider } from "../components/ThemeContext";
 import { logAuditAction } from "../utils/auditLogger.js";
 import { checkEventStatus } from "../utils/eventUtils.js";
+
 
 // =========================================================
 // Comment Section Component
@@ -320,6 +321,8 @@ function ModeratorHome() {
     const [isInboxModalOpen, setIsInboxModalOpen] = useState(false);
     const [moderatorInbox, setModeratorInbox] = useState(() => JSON.parse(localStorage.getItem('moderatorInbox')) || []);
     const [certificationRequests, setCertificationRequests] = useState(() => JSON.parse(localStorage.getItem('certificationRequests')) || []);
+    const [undoClearTimeoutId, setUndoClearTimeoutId] = useState(null);
+    const [inboxClearStatus, setInboxClearStatus] = useState(null);
 
     // Event-related state
     const [events, setEvents] = useState(() => JSON.parse(localStorage.getItem('calendarEvents')) || []);
@@ -547,6 +550,9 @@ function ModeratorHome() {
     };
 
     const handleUpdateReportStatus = (reportId, newStatus) => {
+        const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+        const moderatorName = userProfile?.name || 'Moderator';
+
         let reportToUpdate;
         const updatedReports = allReports.map(report => {
             if (report.id === reportId) {
@@ -563,7 +569,7 @@ function ModeratorHome() {
         const notif = {
             id: Date.now(),
             type: 'report_update',
-            message: `Your report "${reportToUpdate.type}" has been updated to "${newStatus}".`,
+            message: `Your report "${reportToUpdate.type}" has been updated to "${newStatus}" by ${moderatorName}.`,
             reportId: reportId,
             isRead: false,
             date: Date.now()
@@ -573,6 +579,9 @@ function ModeratorHome() {
     };
 
     const handleUpdateCertRequestStatus = (requestId, newStatus) => {
+        const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+        const moderatorName = userProfile?.name || 'Moderator';
+
         let requestToUpdate;
         const updatedRequests = certificationRequests.map(req => {
             if (req.id === requestId) {
@@ -589,7 +598,7 @@ function ModeratorHome() {
         const notif = {
             id: Date.now() + 1,
             type: 'cert_update',
-            message: `Your request for "${requestToUpdate.type}" has been ${newStatus.toLowerCase()}.`,
+            message: `Your request for "${requestToUpdate.type}" has been ${newStatus.toLowerCase()} by ${moderatorName}.`,
             requestId: requestId,
             isRead: false,
             date: Date.now()
@@ -602,11 +611,14 @@ function ModeratorHome() {
             const inboxMessage = {
                 id: Date.now() + 2, // to avoid collision with notif
                 type: 'approved_certificate',
+                details: requestToUpdate.details, // Pass the whole details object
                 certificateType: requestToUpdate.type,
-                requester: requestToUpdate.requester, // Pass as a string
                 purpose: requestToUpdate.purpose,
-                frontIdImage: requestToUpdate.frontIdImage,
+                frontIdImage: requestToUpdate.frontIdImage, // Pass all possible images
                 backIdImage: requestToUpdate.backIdImage,
+                utilityBillImage: requestToUpdate.utilityBillImage,
+                proofOfResidencyImage: requestToUpdate.proofOfResidencyImage,
+                communityTaxCertImage: requestToUpdate.communityTaxCertImage,
                 dateApproved: Date.now(),
                 isRead: false,
             };
@@ -616,12 +628,10 @@ function ModeratorHome() {
     };
 
     const handleDeleteCertRequest = (requestId) => {
-        if (window.confirm("Are you sure you want to permanently delete this certificate request?")) {
-            const updatedRequests = certificationRequests.filter(req => req.id !== requestId);
-            setCertificationRequests(updatedRequests);
-            localStorage.setItem("certificationRequests", JSON.stringify(updatedRequests));
-            logAuditAction('Permanently Deleted Certificate Request', { requestId }, 'moderator');
-        }
+        const updatedRequests = certificationRequests.filter(req => req.id !== requestId);
+        setCertificationRequests(updatedRequests);
+        localStorage.setItem("certificationRequests", JSON.stringify(updatedRequests));
+        logAuditAction('Permanently Deleted Certificate Request', { requestId }, 'moderator');
     };
 
     const handleOpenNotifications = () => {
@@ -665,8 +675,22 @@ function ModeratorHome() {
     };
 
     const handleDeleteInboxMessage = (messageId) => {
-        const updatedMessages = moderatorInbox.filter(msg => msg.id !== messageId);
-        setModeratorInbox(updatedMessages);
+        if (window.confirm("Are you sure you want to delete this message?")) {
+            const updatedMessages = moderatorInbox.filter(msg => msg.id !== messageId);
+            setModeratorInbox(updatedMessages);
+        }
+    };
+
+    const handleClearInbox = () => {
+        if (window.confirm("Are you sure you want to clear all messages from the inbox?")) {
+            setInboxClearStatus('clearing');
+            setTimeout(() => {
+                setModeratorInbox([]);
+                localStorage.setItem('moderatorInbox', JSON.stringify([]));
+                setInboxClearStatus(null);
+                setIsInboxModalOpen(false);
+            }, 1000);
+        }
     };
 
     const handleClearAllDashboardData = () => {
@@ -1119,6 +1143,8 @@ function ModeratorHome() {
                 messages={moderatorInbox}
                 onMarkAsRead={handleMarkInboxAsRead}
                 onDelete={handleDeleteInboxMessage}
+                onClearAll={handleClearInbox}
+                submissionStatus={inboxClearStatus}
             />
 
             <ReportUserModal
@@ -1137,7 +1163,7 @@ function ModeratorHome() {
                 <aside className="m-left-panel">
                     <div className="m-side-buttons">
                         <button
-                            className="m-sidebar-btn orange"
+                            className="m-sidebar-btn orange"    
                             onClick={() => setIsProfileModalOpen(true)}
                         >
                             <FaUser size={30} />

@@ -275,6 +275,11 @@
 .category-safety-alert { background-color: #f97316; } /* Orange */
 .category-community-program { background-color: #10b981; } /* Emerald Green */
 .category-traffic-update { background-color: #f59e0b; } /* Amber */
+.category-weather-alert { color: #0369a1; background-color: #e0f2fe; } /* Sky */
+.category-maintenance-notice { color: #c2410c; background-color: #fff7ed; } /* Orange */
+.category-other{
+    background-color: #505010; /* Stone */
+}
 
 /* Options/Delete Buttons */
 .options-btn {

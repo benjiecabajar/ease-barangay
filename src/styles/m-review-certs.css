@@ -14,10 +14,13 @@
 .view-certs-modal-content {
     background: var(--bg-primary);
     border-radius: 16px;
-    padding: 20px 24px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
     margin-top: 50px;
     width: 700px;
-    height: 600px; /* Set a fixed height */
+    height: 580px; /* Set a fixed height */
     max-width: 90vw;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: slideUpModal 0.4s ease forwards;
@@ -47,11 +50,13 @@
     gap: 1rem;
 }
 
+
 .cert-card {
     background-color: var(--bg-secondary);
     border-radius: 0.5rem;
     border: 1px solid var(--border-primary);
-    padding: 1.25rem 1.5rem;
+    padding: 1.25rem 1.20rem;
+    margin-left: 5px;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
@@ -68,11 +73,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.1rem;
 }
 
 .cert-card-header h3 {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
@@ -81,14 +86,14 @@
 .cert-card-requester {
     color: var(--text-secondary);
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 .cert-card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 1rem;
+    margin-top: 0.50rem;
     padding-top: 0.75rem;
     border-top: 1px dashed var(--border-secondary);
 }

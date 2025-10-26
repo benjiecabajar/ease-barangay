@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaTimes, FaBell, FaRegSadTear, FaClipboardCheck, FaBullhorn, FaFileAlt } from "react-icons/fa";
+import { FaTimes, FaBell, FaRegSadTear, FaClipboardCheck, FaBullhorn, FaFileAlt, FaTrash } from "react-icons/fa";
 import "../styles/modal-notification.css";
 
 const NotificationModal = ({ isOpen, onClose, notifications, onClear, onDelete, submissionStatus }) => {
@@ -8,14 +8,12 @@ const NotificationModal = ({ isOpen, onClose, notifications, onClear, onDelete, 
   if (!isOpen) return null;
 
   const handleDeleteClick = (id) => {
-    if (window.confirm("Are you sure you want to delete this notification?")) {
-      setDeletingNotifId(id);
-      // Wait for animation to finish before calling parent onDelete
-      setTimeout(() => {
-        onDelete(id);
-        setDeletingNotifId(null); // Reset for next deletion
-      }, 500); // Must match CSS animation duration
-    }
+    setDeletingNotifId(id);
+    // Wait for animation to finish before calling parent onDelete
+    setTimeout(() => {
+      onDelete(id);
+      setDeletingNotifId(null); // Reset for next deletion
+    }, 500); // Must match CSS animation duration
   };
   const getNotificationIcon = (type) => {
     switch (type) {
@@ -93,11 +91,10 @@ const NotificationModal = ({ isOpen, onClose, notifications, onClear, onDelete, 
             </div>
           )}
         </div>
-
         {notifications.length > 0 && (
           <div className="modal-footer">
             <button className="clear-all-btn" onClick={onClear}>
-              Clear All Notifications
+              <FaTrash /> Clear All
             </button>
           </div>
         )}

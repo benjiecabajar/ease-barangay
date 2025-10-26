@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { FaTimes, FaInbox, FaRegSadTear, FaCertificate, FaPrint } from 'react-icons/fa';
+import { FaTimes, FaRegSadTear, FaPrint, FaTrash, FaCheckCircle } from 'react-icons/fa';
 import '../styles/modal-inbox.css';
 
-const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete }) => {
+const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete, onClearAll, submissionStatus }) => {
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [deletingMessageId, setDeletingMessageId] = useState(null);
 
@@ -17,13 +17,11 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete }) => {
 
     const handleDeleteClick = (e, messageId) => {
         e.stopPropagation(); // Prevent message from being selected
-        if (window.confirm("Are you sure you want to delete this message?")) {
-            setDeletingMessageId(messageId);
-            setTimeout(() => {
-                onDelete(messageId);
-                setDeletingMessageId(null);
-            }, 500); // Match animation duration
-        }
+        setDeletingMessageId(messageId);
+        setTimeout(() => {
+            onDelete(messageId);
+            setDeletingMessageId(null);
+        }, 500); // Match animation duration
     };
 
     const handlePrint = () => {
@@ -40,6 +38,23 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete }) => {
     return (
         <div className="inbox-modal-overlay" onClick={() => { setSelectedMessage(null); onClose(); }}>
             <div className="inbox-modal-content" onClick={(e) => e.stopPropagation()}>
+                {submissionStatus && (
+                    <div className="submission-overlay">
+                        {submissionStatus === 'clearing' && (
+                            <>
+                                <div className="spinner"></div>
+                                <p>Clearing Inbox...</p>
+                            </>
+                        )}
+                        {submissionStatus === 'success' && (
+                            <>
+                                <FaCheckCircle className="success-icon" size={60} />
+                                <p>Inbox Cleared!</p>
+                            </>
+                        )}
+                    </div>
+                )}
+
                 <div className="modal-header">
                     <h2>{selectedMessage ? 'Message Details' : 'Inbox'}</h2>
                     <button className="close-btn" onClick={() => { setSelectedMessage(null); onClose(); }}><FaTimes size={20} /></button>
@@ -56,17 +71,17 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete }) => {
                                     <div className="cert-header">
                                         <h3>Republic of the Philippines</h3>
                                         <h4>Province of Misamis Oriental</h4>
-                                        <h5>MUNICIPALITY OF VILLANUEVA</h5>
-                                        <h1>Barangay {selectedMessage.requester.barangay || 'Poblacion 1'}</h1>
+                                        <h5>MUNICIPALITY OF {selectedMessage.details?.municipality || 'VILLANUEVA'}</h5>
+                                        <h1>Barangay {selectedMessage.details?.barangay || 'Poblacion 1'}</h1>
                                     </div>
                                     <div className="cert-body">
-                                        <p>This is to certify that <strong>{selectedMessage.requester}</strong>, a resident of this barangay, has been granted a <strong>{selectedMessage.certificateType}</strong> for the purpose of "{selectedMessage.purpose}".</p>
+                                        <p>This is to certify that <strong>{`${selectedMessage.details?.firstName || ''} ${selectedMessage.details?.middleName || ''} ${selectedMessage.details?.lastName || ''}`.trim()}</strong>, a resident of this barangay, has been granted a <strong>{selectedMessage.certificateType}</strong> for the purpose of "{selectedMessage.purpose}".</p>
                                         <p>This certification is issued upon the request of the above-named person for whatever legal purpose it may serve.</p>
                                         <p>Issued this {new Date(selectedMessage.dateApproved).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })} at the Barangay Hall.</p>
                                     </div>
                                     <div className="cert-footer">
                                         <div className="signature-line">
-                                            <strong>JUAN DELA CRUZ</strong>
+                                            <strong>Benjie Cabajar</strong>
                                             <span>Barangay Captain</span>
                                         </div>
                                     </div>
@@ -111,6 +126,13 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete }) => {
                         </div>
                     )}
                 </div>
+                {!selectedMessage && messages.length > 0 && (
+                    <div className="modal-footer">
+                        <button className="clear-all-btn" onClick={onClearAll}>
+                            <FaTrash /> Clear All
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

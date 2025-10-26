@@ -473,7 +473,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="residency-govIdFront-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="residency-govIdFront-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdFront', 'residency')} />
+                        <input type="file" id="residency-govIdFront-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdFront', 'residency')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('govIdFront', 'residency')}>
                         <FaCamera size={16} /> Camera
@@ -495,7 +495,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="residency-govIdBack-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="residency-govIdBack-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdBack', 'residency')} />
+                        <input type="file" id="residency-govIdBack-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdBack', 'residency')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('govIdBack', 'residency')}>
                         <FaCamera size={16} /> Camera
@@ -517,7 +517,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="residency-utilityBill-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="residency-utilityBill-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'utilityBill', 'residency')} />
+                        <input type="file" id="residency-utilityBill-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'utilityBill', 'residency')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('utilityBill', 'residency')}>
                         <FaCamera size={16} /> Camera
@@ -548,7 +548,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="indigency-id-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="indigency-front-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'front', 'indigency')} />
+                        <input type="file" id="indigency-id-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'front', 'indigency')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('front', 'indigency')}>
                         <FaCamera size={16} /> Camera
@@ -569,7 +569,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="indigency-id-back-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="indigency-back-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'back', 'indigency')} />
+                        <input type="file" id="indigency-id-back-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'back', 'indigency')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('back', 'indigency')}>
                         <FaCamera size={16} /> Camera
@@ -601,7 +601,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="goodmoral-id-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="goodmoral-govIdFront-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdFront', 'goodMoral')} />
+                        <input type="file" id="goodmoral-id-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdFront', 'goodMoral')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('govIdFront', 'goodMoral')}>
                         <FaCamera size={16} /> Camera
@@ -622,7 +622,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="goodmoral-id-back-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="goodmoral-govIdBack-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdBack', 'goodMoral')} />
+                        <input type="file" id="goodmoral-id-back-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'govIdBack', 'goodMoral')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('govIdBack', 'goodMoral')}>
                         <FaCamera size={16} /> Camera
@@ -646,7 +646,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="goodmoral-residency-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="goodmoral-proofOfResidency-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'proofOfResidency', 'goodMoral')} />
+                        <input type="file" id="goodmoral-residency-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'proofOfResidency', 'goodMoral')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('proofOfResidency', 'goodMoral')} >
                         <FaCamera size={16} /> Camera
@@ -668,7 +668,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
                     <div className="evidence-buttons">
                       <label htmlFor="goodmoral-cedula-upload" className="evidence-btn">
                         <FaUpload size={16} /> Upload
-                        <input type="file" id="goodmoral-communityTaxCert-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'communityTaxCert', 'goodMoral')} />
+                        <input type="file" id="goodmoral-cedula-upload" accept="image/*" onChange={(e) => handleFileChange(e, 'communityTaxCert', 'goodMoral')} style={{ display: 'none' }} />
                       </label>
                       <button type="button" className="evidence-btn" onClick={() => startCamera('communityTaxCert', 'goodMoral')} >
                         <FaCamera size={16} /> Camera

@@ -394,6 +394,7 @@
 .category-safety-alert { background-color: #f97316; } /* Orange */
 .category-community-program { background-color: #10b981; } /* Emerald Green */
 .category-traffic-update { background-color: #f59e0b; } /* Amber */
+.category-other-announcements { background-color: #543636; } /* Pink */
 
 
 /* Styles for new form elements in Post Modal */
@@ -584,7 +585,7 @@
   flex-grow: 0; /* Prevent it from growing to fill space */
   overflow: hidden; /* Hide overflow from the container */
   box-shadow: var(--card-shadow);
-  padding: 0 18px 10px; /* Adjust padding */
+  padding: 0 px 10px; /* Adjust padding */
   margin-bottom: 10px;
 }
 
@@ -1168,8 +1169,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
+  margin-bottom: 10px; /* Reduced margin */
+  margin-top: -20px;
   border-bottom: 1px solid var(--border-primary);
 }
 

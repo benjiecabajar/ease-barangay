@@ -20,7 +20,7 @@
     padding-bottom: 20px;
     padding-top: 20px;
     margin-top: 60px;
-    width: 800px;
+    width: 780px;
     height: 600px; /* Fixed height */
     max-width: 90vw; 
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -55,6 +55,8 @@
     font-weight: 700;
     color: var(--brand-primary);
     text-align: left;
+    margin-top: -10px;
+    margin-bottom: 9px;
     flex-grow: 1;
 }
 
@@ -62,7 +64,7 @@
     background: var(--bg-secondary);
     color: var(--text-secondary);
     border: none;
-    top: 30px;
+    top: 25px;
     right:30px;
     border-radius: 50%;
     width: 32px;
@@ -86,6 +88,7 @@
     flex-direction: column;
     flex-grow: 1;
     /* Scrolling is now handled by the tab content */
+    gap: 1rem; /* Add space between report cards */
     overflow: hidden;
 }
 
@@ -114,7 +117,7 @@
     border-radius: 0.5rem;
     border: 1px solid var(--border-primary);
     /* --- IMPROVEMENT: Compact vertical padding for more items --- */
-    padding: 1rem 2rem;
+    padding: 10px 30px;
     margin-left: 2px;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -169,7 +172,7 @@
 
 .report-card-details {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.2rem;
     font-size: 0.9rem;
 }
 
