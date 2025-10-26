@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Calendar from "react-calendar"; 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
 import "../styles/moderator-home.css";
 // Import only icons needed in ModeratorHome (sidebar, posts, modals, etc.)
@@ -10,6 +10,7 @@ import ReviewCertsModal from "../components/m-review-certs.jsx";
 import ReportUserModal from "../components/m-report-user-modal.jsx";
 import SupportModal from "../components/m-support-modal.jsx";
 import AnalyticsDashboard from "../components/m-analytics-dashboard.jsx";
+import CommentSection from "../components/comment-section.jsx";
 import "../styles/m-create-post.css";
 import ModeratorInboxModal from "../components/m-inbox-modal.jsx";
 import ReviewReportModal from "../components/m-review-report.jsx"; // Import the new modal
@@ -25,171 +26,6 @@ import { logAuditAction } from "../utils/auditLogger.js";
 import { checkEventStatus } from "../utils/eventUtils.js";
 
 
-// =========================================================
-// Comment Section Component
-// Hides comments beyond the last 3 automatically on load
-// =========================================================
-const CommentSection = ({ postId, comments, handleAddComment, onEditComment, onDeleteComment, onReportComment }) => {
-    const [newComment, setNewComment] = useState("");
-    const [showAllComments, setShowAllComments] = useState(false); 
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (newComment.trim()) {
-            handleAddComment(postId, newComment);
-            setNewComment("");
-            // Do NOT auto-expand on new comment; keep default collapsed
-        }
-    };
-
-    const [editingCommentId, setEditingCommentId] = useState(null);
-    const [openMenuCommentId, setOpenMenuCommentId] = useState(null);
-    const [editedText, setEditedText] = useState('');
-
-    const handleEditClick = (comment) => {
-        setEditingCommentId(comment.id);
-        setEditedText(comment.text);
-    };
-
-    const handleCancelEdit = () => {
-        setOpenMenuCommentId(null);
-        setEditingCommentId(null);
-        setEditedText('');
-    };
-
-    const handleSaveEdit = () => {
-        onEditComment(postId, editingCommentId, editedText);
-        handleCancelEdit();
-        setOpenMenuCommentId(null);
-    };
-
-    // Decide which comments to display
-    const commentsToDisplay = showAllComments 
-        ? comments 
-        : comments.slice(-3);
-
-    const hasMoreComments = comments.length > 3;
-
-    return (
-        <div className="comment-section">
-            <h5 style={{ fontSize: '14px', fontWeight: '600', color: '#4b5563', marginTop: '15px' }}>
-                Comments ({comments.length})
-            </h5>
-
-            {/* Show "View more" if more than 3 comments and not expanded */}
-            {hasMoreComments && !showAllComments && (
-                <button 
-                    onClick={() => setShowAllComments(true)}
-                    className="view-more-comments-btn show"
-                    style={{ color: '#2563eb' }}
-                >
-                    View more {comments.length - 3} comments...
-                </button>
-            )}
-
-            {/* Comments */}
-            <div className="comments-list">
-                {commentsToDisplay.map((comment, index) => (
-                    <div 
-                        key={comment.id || index} 
-                        className="comment" 
-                    >
-                        <img 
-                            src={comment.authorAvatar} 
-                            alt="avatar" 
-                            style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} 
-                        />
-                            {editingCommentId === comment.id ? (
-                                <div className="comment-edit-form">
-                                    <textarea value={editedText} onChange={(e) => setEditedText(e.target.value)} />
-                                    <div className="comment-edit-actions">
-                                        <button onClick={handleSaveEdit}>Save</button>
-                                        <button onClick={handleCancelEdit}>Cancel</button>
-                                    </div>
-                                </div>
-                            ) : (
-                              <div className="comment-body">
-                                <div className="comment-text-content">
-                                  <span style={{ fontWeight: '600', fontSize: '13px', color: '#111827' }}>{comment.author}</span>              
-                                  <span className="comment-date">
-                                    {new Date(comment.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
-                                  </span>
-                                  <p style={{ margin: '0', fontSize: '14px', lineHeight: '1.4', color: '#374151' }}>{comment.text}</p>
-                                </div>
-                                <div className="comment-options-container">
-                                  <button className="comment-options-btn" onClick={() => setOpenMenuCommentId(openMenuCommentId === comment.id ? null : comment.id)}>
-                                    <FaEllipsisH />
-                                  </button>
-                                  {openMenuCommentId === comment.id && (
-                                    comment.author === 'Community Moderator' ? (
-                                      <div className="comment-actions-menu">
-                                        <button onClick={() => { handleEditClick(comment); setOpenMenuCommentId(null); }}>
-                                          <FaEdit /> Edit
-                                        </button>
-                                        <button onClick={() => { onDeleteComment(postId, comment.id); setOpenMenuCommentId(null); }} className="delete">
-                                          <FaTrash /> Delete
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      <div className="comment-actions-menu">
-                                        <button onClick={() => { onReportComment(comment); setOpenMenuCommentId(null); }} className="report">
-                                          <FaExclamationTriangle /> Report
-                                        </button>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                    </div>
-                ))}
-            </div>
-
-            {/* Hide button when expanded */}
-            {hasMoreComments && showAllComments && (
-                <button 
-                    onClick={() => setShowAllComments(false)}
-                    className="view-more-comments-btn hide"
-                    style={{ color: '#6b7280' }}
-                >
-                    Hide comments
-                </button>
-            )}
-
-            {/* Add comment form */}
-            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    style={{
-                        flexGrow: 1,
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        border: '1px solid #d1d5db',
-                        fontSize: '14px',
-                    }}
-                />
-                <button 
-                    type="submit" 
-                    disabled={!newComment.trim()}
-                    style={{
-                        padding: '8px 15px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        background: newComment.trim() ? '#2563eb' : '#9ca3af',
-                        color: 'white',
-                        fontWeight: '600',
-                        cursor: newComment.trim() ? 'pointer' : 'not-allowed',
-                    }}
-                >
-                    Post
-                </button>
-            </form>
-        </div>
-    );
-};
 
 // =========================================================
 // Main Content Feed Component
@@ -1284,6 +1120,7 @@ function ModeratorHome() {
                                 handleEditComment={handleEditComment}
                                 handleDeleteComment={handleDeleteComment}
                                 handleReportComment={handleReportComment}
+                                currentUser="Community Moderator"
                                 getCategoryClass={getCategoryClass}
                             />
                         </>

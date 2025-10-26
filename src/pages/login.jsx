@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "../styles/login.css";
 import "@fontsource/poppins";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { logAuditAction } from "../utils/auditLogger";
 
@@ -13,6 +13,7 @@ function Login() {
   const [notification, setNotification] = useState(''); 
   // NEW STATE: To track the "Remember me" checkbox status
   const [rememberMe, setRememberMe] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ function Login() {
     <div className="login-page">
       <div className="login-box">
         <h1>Login</h1>
-        <h2>__</h2>
+        <h2>----</h2>
         <h3>Please enter your credentials.</h3>
 
         <label className="input-label">Username</label>
@@ -81,11 +82,14 @@ function Login() {
         <div className="input-container">
           <FaLock className="input-icon" />
           <input 
-            type="password" 
+            type={showPassword ? "text" : "password"} 
             placeholder="Enter your password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <div className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </div>
         </div>
 
         <div className="options">
