@@ -383,10 +383,14 @@ export default function SignIn() {
                 return; // Prevent checking
               }
 
-              if (hasViewedTerms || e.target.checked) { // Allow checking if viewed, or unchecking anytime
-                  setTermsAccepted(e.target.checked);
-              } else {
-                setNotification("Please click to read the Terms and Conditions before accepting.");
+              if (e.target.checked) { // If user is trying to check the box
+                if (hasViewedTerms) {
+                  setTermsAccepted(true);
+                } else {
+                  setNotification("Please click to read the Terms and Conditions before accepting.");
+                }
+              } else { // Allow unchecking anytime
+                setTermsAccepted(false);
               }
             }}
           />
