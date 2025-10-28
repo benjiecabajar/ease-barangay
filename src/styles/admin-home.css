@@ -16,20 +16,37 @@
     --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.1);
 }
 
+/* ======================================================== */
+/* FONT SIZE VARIABLES */
+/* ======================================================== */
+[data-font-size="small"] {
+  --font-size-base: 14px; --font-size-lg: 16px; --font-size-xl: 18px;
+}
+[data-font-size="medium"] {
+  --font-size-base: 16px; --font-size-lg: 18px; --font-size-xl: 20px;
+}
+[data-font-size="large"] {
+  --font-size-base: 18px; --font-size-lg: 20px; --font-size-xl: 22px;
+}
+
+
 .admin-page {
+    display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure it takes at least the full viewport height */
+    height: 100vh; /* Full viewport height */
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    height: 100vh;
+    overflow: hidden; /* Prevent the whole page from scrolling */
     font-family: "Poppins", sans-serif;
-    overflow-y: scroll;
+    
 }
 
 .admin-content {
     display: flex;
+    flex: 1; /* Allow content to fill remaining space */
     gap: 20px;
     padding: 24px;
     max-width: 1600px;
+    overflow-y: auto; /* Make this the scrollable area */
     margin: 0 auto;
 }
 
@@ -44,16 +61,6 @@
     /* Removed flex properties to allow natural height growth */
 }
 
-.admin-main-content h1 {
-    font-size: 26px; /* Slightly smaller */
-    font-weight: 700;
-    margin-bottom: 24px;
-    color: var(--admin-text-primary);
-    border-bottom: 2px solid var(--admin-border);
-    padding-bottom: 16px;
-    letter-spacing: -0.5px;
-}
-
 .admin-feed-controls {
     display: flex;
     gap: 12px;
@@ -65,7 +72,7 @@
 .admin-feed-controls input,
 .admin-feed-controls select {
     padding: 10px 16px;
-    border: 2px solid transparent;
+    border: 2px solid transparent; 
     border-radius: 10px;
     font-size: 15px;
     background-color: var(--admin-bg);
@@ -151,13 +158,13 @@
 .author-name {
     font-weight: 600;
     color: var(--admin-text-primary);
-    font-size: 15px;
+    font-size: var(--font-size-base);
 }
 
 .post-time {
     font-size: 12px;
     color: var(--admin-text-secondary);
-    font-weight: 500;
+    font-weight: 500; 
 }
 
 .post-actions {
@@ -232,14 +239,14 @@
 }
 
 .post-title {
-    font-size: 18px;
+    font-size: var(--font-size-lg);
     font-weight: 600;
     margin: 8px 0;
     color: var(--admin-text-primary);
 }
 
 .post-description {
-    font-size: 15px;
+    font-size: var(--font-size-base);
     line-height: 1.6;
     color: var(--admin-text-primary);
 }
@@ -268,16 +275,17 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 5px;
+    margin-top: -10px;
 }
 
 .admin-widget {
     background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-    padding: 24px;
+    padding: 14px;
     border-radius: 16px;
     border: 1px solid var(--admin-border);
     box-shadow: var(--shadow-md);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease-in-out;
 }
 
 .admin-widget:hover {
@@ -288,11 +296,10 @@
 .admin-widget h4 {
     display: flex;
     align-items: center;
-    gap: 8px; /* Smaller gap */
-    font-size: 18px;
+    gap: 10px; 
+    font-size: 16px;
     font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 12px;
+    margin: 0 0 8px 0;
     color: var(--admin-text-primary);
 }
 
@@ -310,7 +317,7 @@
     height: 26px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; 
     font-size: 12px;
     font-weight: 700;
     line-height: 1;
@@ -324,9 +331,9 @@
 }
 
 .admin-widget p {
-    font-size: 13px; /* Smaller font */
+    font-size: var(--font-size-base);
     color: var(--admin-text-secondary);
-    margin-bottom: 18px;
+    margin: 0 0 16px 0;
     line-height: 1.5;
 }
 
@@ -491,7 +498,7 @@
 .audit-filters input,
 .audit-filters select {
     padding: 10px 14px;
-    border: 2px solid transparent;
+    border: 2px solid transparent; 
     background-color: var(--admin-bg);
     border-radius: 10px;
     transition: all 0.3s ease;
@@ -546,13 +553,13 @@
 
 .log-actor {
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--font-size-base);
     color: var(--admin-text-primary);
 }
 
 .log-action {
     font-style: italic;
-    font-size: 15px;
+    font-size: var(--font-size-base);
     color: var(--admin-text-secondary);
 }
 
@@ -650,6 +657,23 @@
     -moz-appearance: textfield;
 }
 
+/* Custom Scrollbar for Right Panel and Modals */
+.admin-right-panel::-webkit-scrollbar,
+.admin-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-right-panel::-webkit-scrollbar-track,
+.admin-modal-body::-webkit-scrollbar-track {
+    background: var(--admin-bg);
+    border-radius: 10px;
+}
+
+.admin-right-panel::-webkit-scrollbar-thumb,
+.admin-modal-body::-webkit-scrollbar-thumb {
+    background-color: var(--admin-border);
+    border-radius: 10px;
+}
 /* Broadcast Specific */
 .broadcast-form {
     margin-bottom: 24px;
@@ -659,7 +683,7 @@
     width: 100%;
     min-height: 100px;
     padding: 12px;
-    border-radius: 10px;
+    border-radius: 10px; 
     border: 2px solid var(--admin-border);
     margin-bottom: 12px;
     font-family: inherit;
@@ -675,7 +699,7 @@
 
 .broadcast-form select {
     padding: 10px 14px;
-    border-radius: 10px;
+    border-radius: 10px; 
     margin-right: 12px;
     border: 2px solid var(--admin-border);
     background-color: var(--admin-bg);
@@ -690,7 +714,7 @@
 
 .broadcast-list .broadcast-item {
     padding: 18px;
-    border-radius: 12px;
+    border-radius: 12px; 
     margin-bottom: 12px;
     transition: all 0.3s ease;
     border: 1px solid transparent;

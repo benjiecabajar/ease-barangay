@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "../styles/login.css";
 import "../styles/sign_in.css";
 import "@fontsource/poppins";
-import { FaUser, FaCalendarAlt, FaVenusMars, FaEnvelope, FaLock, FaMapMarkerAlt, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaCalendarAlt, FaVenusMars, FaEnvelope, FaLock, FaMapMarkerAlt, FaEye, FaEyeSlash, FaBullhorn, FaFileContract, FaExclamationTriangle } from "react-icons/fa";
 import { logAuditAction } from "../utils/auditLogger";
 import TermsModal from "../components/modal-terms";
 
@@ -278,6 +278,9 @@ export default function SignIn() {
         // Save user to a centralized 'users' list in localStorage
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const newUser = {
+          // --- FIX: Add default avatar ---
+          avatar: `https://via.placeholder.com/150/0d47a1/ffffff?text=${form.firstName.charAt(0).toUpperCase()}`,
+          // -----------------------------
           id: `user-${Date.now()}`,
           username: form.username,
           email: form.email,
@@ -289,6 +292,22 @@ export default function SignIn() {
           ...form // include other form details like name, dob, etc.
         };
         localStorage.setItem('users', JSON.stringify([...users, newUser]));
+
+        // --- FIX: Create and save the default user profile for the new account ---
+        const userProfile = {
+          id: newUser.id,
+          name: `${form.firstName} ${form.lastName}`,
+          username: form.username,
+          email: form.email,
+          municipality: form.municipality,
+          barangay: form.barangay,
+          role: 'resident',
+          birthDate: new Date(form.dob).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          joinDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+          avatar: newUser.avatar,
+        };
+        localStorage.setItem('userProfile', JSON.stringify(userProfile));
+        // --------------------------------------------------------------------
 
         // --- END SIMULATION ---
 
@@ -310,6 +329,20 @@ export default function SignIn() {
 
   return (
     <div className="sign-page">
+      <div className="sign-content-wrapper">
+        <div className="sign-promo">
+          <div className="promo-content">
+            <h1>Join Your Community</h1>
+            <p>Create an account to connect with your barangay, access services, and stay informed.</p>
+            <ul className="promo-features">
+              <li><FaBullhorn className="promo-icon" /> Get real-time announcements.</li>
+              <li><FaFileContract className="promo-icon" /> Request documents online.</li>
+              <li><FaExclamationTriangle className="promo-icon" /> Report local concerns easily.</li>
+            </ul>
+          </div>
+        </div>
+
+
       <TermsModal 
         isOpen={isTermsModalOpen}
         onClose={() => {
@@ -430,8 +463,12 @@ export default function SignIn() {
 
         {notification && <p className="notification">{notification}</p>}
 
-        <button className="signin-btn" onClick={handleSubmit}>
-          {signupStatus === 'submitting' ? 'Creating Account...' : 'Sign Up'}
+        <button className="signin-btn" onClick={handleSubmit} disabled={signupStatus === 'submitting'}>
+          {signupStatus === 'submitting' ? (
+            <><div className="spinner"></div> Creating Account...</>
+          ) : (
+            'Sign Up'
+          )}
         </button>
 
         <p className="signup-text">
@@ -439,6 +476,7 @@ export default function SignIn() {
         </p>
         </div>
       )}
+      </div>
       </div>
   );
 }

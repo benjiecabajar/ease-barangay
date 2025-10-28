@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FaTimes, FaHistory } from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import { FaTimes, FaHistory, FaSave, FaCheckCircle } from "react-icons/fa";
 import "../styles/modal-settings.css";
 import { useTheme } from "./ThemeContext";
 import AuditLogModal from "./modal-audit-log.jsx";
@@ -7,14 +7,34 @@ import AuditLogModal from "./modal-audit-log.jsx";
 const SettingModal = ({ isOpen, onClose, role }) => {
   const { theme, setTheme, fontSize, setFontSize } = useTheme();
   const [isAuditLogOpen, setIsAuditLogOpen] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  // Local state to manage selections before saving
+  const [localTheme, setLocalTheme] = useState(theme);
+  const [localFontSize, setLocalFontSize] = useState(fontSize);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLocalTheme(theme);
+      setLocalFontSize(fontSize);
+    }
+  }, [isOpen, theme, fontSize]);
+
+  const handleSaveSettings = () => {
+    setTheme(localTheme);
+    setFontSize(localFontSize);
+    setShowConfirmation(true);
+    setTimeout(() => {
+      setShowConfirmation(false);
+      onClose();
+    }, 1500);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="settings-modal-overlay" onClick={onClose}>
-      <div
-        className="settings-modal-content"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Settings</h2>
           <button className="close-btn" onClick={onClose}>
@@ -28,6 +48,12 @@ const SettingModal = ({ isOpen, onClose, role }) => {
           role={role}
         />
 
+        {showConfirmation && (
+          <div className="settings-save-confirmation">
+            <FaCheckCircle />
+            <span>Settings Saved!</span>
+          </div>
+        )}
         <div className="settings-body">
           <h3 className="settings-section-header">Notifications</h3>
           <div className="setting-item">
@@ -41,7 +67,7 @@ const SettingModal = ({ isOpen, onClose, role }) => {
           <h3 className="settings-section-header">Appearance & Accessibility</h3>
           <div className="setting-item">
             <label>Theme</label>
-            <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+            <select value={localTheme} onChange={(e) => setLocalTheme(e.target.value)}>
               <option value="light">Light Mode</option>
               <option value="dark">Dark Mode</option>
             </select>
@@ -49,8 +75,8 @@ const SettingModal = ({ isOpen, onClose, role }) => {
           <div className="setting-item">
             <label>Font Size</label>
             <select
-              value={fontSize}
-              onChange={(e) => setFontSize(e.target.value)}
+              value={localFontSize}
+              onChange={(e) => setLocalFontSize(e.target.value)}
             >
               <option value="small">Small</option>
               <option value="medium">Medium</option>
@@ -73,6 +99,9 @@ const SettingModal = ({ isOpen, onClose, role }) => {
           <button className="view-log-btn" onClick={() => setIsAuditLogOpen(true)}>
             <FaHistory /> View Activity Log
           </button>
+        </div>
+        <div className="settings-footer">
+          <button className="save-settings-btn" onClick={handleSaveSettings}><FaSave /> Save Settings</button>
         </div>
       </div>
     </div>

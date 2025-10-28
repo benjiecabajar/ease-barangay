@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FaUsers, FaUserClock, FaChartLine, FaFileExport, FaShieldAlt, FaServer, FaUserPlus, FaHistory, FaFileAlt, FaBullhorn, FaCalendarAlt, FaMapMarkerAlt, FaCertificate, FaCheckCircle, FaTimesCircle, FaExclamationCircle } from 'react-icons/fa';
+import { FaUsers, FaUserClock, FaChartLine, FaFileExport, FaShieldAlt, FaServer, FaUserPlus, FaHistory, FaFileAlt, FaBullhorn, FaCalendarAlt, FaMapMarkerAlt, FaCertificate, FaCheckCircle, FaTimesCircle, FaExclamationCircle, FaEye, FaEyeSlash, FaNewspaper, FaTrash } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import '../styles/analytics-dashboard.css';
 
@@ -47,7 +47,23 @@ const DashboardSkeleton = () => (
 
 const ROLE_COLORS = { Admins: '#0ea5e9', Moderators: '#8b5cf6', Residents: '#10b981' };
 
-const AdminAnalyticsDashboard = ({ users, auditLogs, reports, settings, certificationRequests }) => {
+const AdminAnalyticsDashboard = ({ 
+    users, 
+    auditLogs, 
+    reports, 
+    settings, 
+    certificationRequests,
+    processedPosts,
+    postSearchTerm,
+    setPostSearchTerm,
+    sortOrder,
+    setSortOrder,
+    filterCategory,
+    setFilterCategory,
+    POST_CATEGORIES,
+    handleDeletePost,
+    getCategoryClass
+}) => {
     const [activeTab, setActiveTab] = useState('users');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -313,9 +329,10 @@ const AdminAnalyticsDashboard = ({ users, auditLogs, reports, settings, certific
             </div>
             <div className="analytics-tabs">
                 <button onClick={() => setActiveTab('users')} className={activeTab === 'users' ? 'active' : ''}><FaUsers /> User Analytics</button>
-                <button onClick={() => setActiveTab('moderators')} className={activeTab === 'moderators' ? 'active' : ''}><FaShieldAlt /> Moderator Performance</button>
                 <button onClick={() => setActiveTab('reports')} className={activeTab === 'reports' ? 'active' : ''}><FaFileAlt /> Reports Analytics</button>
                 <button onClick={() => setActiveTab('certs')} className={activeTab === 'certs' ? 'active' : ''}><FaCertificate /> Certificate Analytics</button>
+                                <button onClick={() => setActiveTab('moderators')} className={activeTab === 'moderators' ? 'active' : ''}><FaShieldAlt /> Moderator Performance</button>
+                <button onClick={() => setActiveTab('feed')} className={activeTab === 'feed' ? 'active' : ''}><FaNewspaper /> Global Content Feed</button>
                 <button onClick={() => setActiveTab('export')} className={activeTab === 'export' ? 'active' : ''}><FaFileExport /> Data Export</button>
             </div>
 
@@ -452,6 +469,52 @@ const AdminAnalyticsDashboard = ({ users, auditLogs, reports, settings, certific
                             </ResponsiveContainer>
                         </div>
                     </>
+                )}
+
+                {activeTab === 'feed' && (
+                    <div className="global-feed-container">
+                        <div className="admin-feed-controls">
+                            <input
+                                type="text"
+                                placeholder="Search by Post ID..."
+                                value={postSearchTerm}
+                                onChange={e => setPostSearchTerm(e.target.value)}
+                            />
+                            <select id="sort-posts" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} title="Sort posts">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                            </select>
+                            <select id="filter-category" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} title="Filter by category">
+                                <option value="All">All Categories</option>
+                                {POST_CATEGORIES.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="post-list">
+                            {processedPosts.length > 0 ? processedPosts.map(post => (
+                                <div key={post.id} className="admin-post-card">
+                                    <div className="post-card-header">
+                                        <img src={post.authorAvatar} alt="author" className="author-avatar" />
+                                        <div>
+                                            <span className="author-name">{post.author}</span>
+                                            <span className="post-time">
+                                                {post.category && (
+                                                    <span className={`post-category-badge ${getCategoryClass(post.category)}`}>{post.category}</span>
+                                                )}
+                                                {new Date(post.date).toLocaleString()}
+                                            </span>
+                                        </div>
+                                        <div className="post-actions">
+                                            <button className="action-btn delete-btn" title="Delete Post" onClick={() => handleDeletePost(post.id)}><FaTrash /></button>
+                                        </div>
+                                    </div>
+                                    {post.title && <h3 className="post-title">{post.title}</h3>}
+                                    <p className="post-description">{post.description}</p>
+                                </div>
+                            )) : <p>No announcements found.</p>}
+                        </div>
+                    </div>
                 )}
 
                 {activeTab === 'export' && (

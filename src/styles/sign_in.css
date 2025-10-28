@@ -1,35 +1,68 @@
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  background: transparent;
-  font-family: "Poppins";
-  overflow: hidden;
-}
-
 .sign-page {
   display: flex;
   height: 100vh;
   width: 100%;
   margin: 0;
-  background: linear-gradient(rgba(46,48,174,0.45), rgba(46,48,174,0.45)),
+  background: linear-gradient(rgba(13, 71, 161, 0.7), rgba(13, 71, 161, 0.7)),
               url("../assets/bg.jpg") center/cover no-repeat;
   background-size: cover;
   background-attachment: fixed;
-  justify-content: center; 
   align-items: center;
-  overflow: hidden;
-}  
+  justify-content: center;
+  overflow: hidden; /* Prevents scrollbars on the main page */
+  padding: 2rem;
+  box-sizing: border-box;
+}
 
+/* ======================================================== */
+/* FONT SIZE VARIABLES */
+/* ======================================================== */
+[data-font-size="small"] {
+  --font-size-base: 13px; --font-size-lg: 15px; --font-size-xl: 17px;
+}
+[data-font-size="medium"] {
+  --font-size-base: 14px; --font-size-lg: 16px; --font-size-xl: 18px;
+}
+[data-font-size="large"] {
+  --font-size-base: 15px; --font-size-lg: 17px; --font-size-xl: 19px;
+}
+
+.sign-content-wrapper {
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.sign-promo {
+  flex: 1;
+  padding: 4rem;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.promo-logo-container img {
+  width: 100px;
+  height: 100px;
+  animation: logo-fade-in-up 0.8s ease-out forwards;
+}
 .sign-box {
   background: rgba(242,242,245,0.95);
   padding: 3rem 3rem;
-  max-height: 85vh;
-  width: 400px;
-  margin-left:63%;
+  max-height: 75vh;
+  max-width: 62vh;
+  flex-basis: 55%;
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
+  border-radius: 0 24px 24px 0;
+  backdrop-filter: blur(20px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow-y: auto;
   overflow-x: hidden;
@@ -93,7 +126,7 @@ html, body, #root {
 }
 
 .role-selector {
-  border: 2px solid #d1d5db;
+  border: 2px solid #d1d5db; 
   border-radius: 16px;
   font-size: 14px;
   height: 120px;
@@ -127,7 +160,7 @@ html, body, #root {
 
 .info-label {
   display: flex;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   margin: 0 0 8px 0;
   color: #111;
@@ -239,7 +272,7 @@ html, body, #root {
   box-sizing: border-box; /* Add this to include padding in the width calculation */
   border-radius: 12px;
   background: #ffffff;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-family: "Poppins";
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -249,13 +282,6 @@ html, body, #root {
 /* New rule for inputs without an icon */
 .info-inputs input.no-icon {
   padding: 13px 16px;
-}
-
-.info-inputs input:focus {
-  background: #ffffff;
-  border: 2px solid #0d47a1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.15);
 }
 
 .info-inputs input::placeholder {
@@ -282,19 +308,11 @@ html, body, #root {
   box-sizing: border-box; /* And here as well */
   border-radius: 12px;
   background: #ffffff;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-family: "Poppins";
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.extra-info input:focus,
-.extra-info select:focus {
-  background: #ffffff;
-  border: 2px solid #0d47a1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.15);
 }
 
 .info-inputs select {
@@ -304,7 +322,7 @@ html, body, #root {
   box-sizing: border-box; /* And finally here */
   border-radius: 12px;
   background: #ffffff;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   height: 52px; /* Add this to ensure consistent height */
   font-family: "Poppins";
   outline: none;
@@ -314,6 +332,10 @@ html, body, #root {
   cursor: pointer;
 }
 
+/* Focus styles for all inputs and selects in the sign-in form */
+.info-inputs input:focus,
+.extra-info input:focus,
+.extra-info select:focus,
 .info-inputs select:focus {
   background: #ffffff;
   border: 2px solid #0d47a1;
@@ -323,7 +345,7 @@ html, body, #root {
 
 .terms-container {
   display: flex;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -367,7 +389,7 @@ html, body, #root {
   border: none;
   border-radius: 12px;
   color: #fff;
-  font-size: 15px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   cursor: pointer;
   font-family: "Poppins", sans-serif;
@@ -387,11 +409,34 @@ html, body, #root {
   box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
 }
 
+.signin-btn:disabled {
+  background: #1d5299; /* Darker, less saturated blue */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
+}
+
+.signin-btn .spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 10px;
+}
+
+.signin-btn {
+  justify-content: center;
+  align-items: center;
+}
+
 .signup-text {
   margin-top: 10px;
   margin-bottom: 8px;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-family: "Poppins", sans-serif;
   color: #111;
   font-weight: 400;
@@ -480,17 +525,26 @@ html, body, #root {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .sign-box {
+  .sign-content-wrapper {
+    flex-direction: column;
     width: 90%;
-    max-width: 440px;
+    height: 90vh;
+  }
+
+  .sign-promo {
+    display: none; /* Hide promo on small screens */
+  }
+
+  .sign-box {
+    flex-basis: 100%;
     max-height: 90vh;
     padding: 2.5rem 2rem;
   }
-  
+
   .sign-box h2 {
     font-size: 32px;
   }
-  
+
   .role-selector {
     height: 100px;
     width: 100px;
@@ -500,5 +554,39 @@ html, body, #root {
   .name-column,
   .extra-info {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sign-promo {
+    flex-basis: 40%;
+    padding: 2rem;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes logo-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes content-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

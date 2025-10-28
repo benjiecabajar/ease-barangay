@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
 // 1. IMPORT the image file
 // Adjust the path to where your logo.png is actually located
 import logoImage from "../assets/logo.png"; 
 import defaultAvatar from "../assets/default-avatar.png";
 import "../styles/header.css";
+import { FaSignOutAlt } from 'react-icons/fa';
 
 // All the unnecessary and problematic icon imports have been removed.
 
 const Header = ({ logoText = "EaseBarangay" }) => {
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [username, setUsername] = useState("{User}");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadProfile = () => {
@@ -25,25 +30,47 @@ const Header = ({ logoText = "EaseBarangay" }) => {
 
     // Listen for storage changes to update the avatar if it's changed in another tab/component
     window.addEventListener('storage', loadProfile);
-    return () => window.removeEventListener('storage', loadProfile);
+
+    const handleClickOutside = (event) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+            setIsMenuOpen(false);
+        }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+        window.removeEventListener('storage', loadProfile);
+        document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
+
+    const handleLogout = () => {
+        navigate('/login');
+    };
 
     return (
         // Top bar
         <header className="top-bar">
-            <div className="logo">
-                {/* Image added next to the logoText */}
-                <img src={logoImage} alt="EaseBarangay Logo" className="logo-icon" />
-                {logoText}
-            </div>
+            <Link to="/" className="logo-link">
+                <div className="logo">
+                    <img src={logoImage} alt="EaseBarangay Logo" className="logo-icon" />
+                    <span>{logoText}</span>
+                </div>
+            </Link>
             <h2 className="updates-title"></h2>
-            <div className="user-info">
+            <div className="user-info" ref={menuRef}>
                 <span className="username">{username}</span> 
                 <img
                     src={avatar}
                     alt="User avatar"
                     className="avatar"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
                 />
+                {isMenuOpen && (
+                    <div className="header-dropdown-menu">
+                        <button onClick={handleLogout} className="logout-btn"><FaSignOutAlt /> Logout</button>
+                    </div>
+                )}
             </div>
         </header>
     );

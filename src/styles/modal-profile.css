@@ -12,6 +12,19 @@
   padding-top: 60px; /* Add padding to avoid header */
 }
 
+/* ======================================================== */
+/* FONT SIZE VARIABLES */
+/* ======================================================== */
+[data-font-size="small"] {
+  --font-size-base: 13px; --font-size-lg: 15px; --font-size-xl: 17px;
+}
+[data-font-size="medium"] {
+  --font-size-base: 14px; --font-size-lg: 16px; --font-size-xl: 18px;
+}
+[data-font-size="large"] {
+  --font-size-base: 15px; --font-size-lg: 17px; --font-size-xl: 19px;
+}
+
 @keyframes fadeInOverlay {
   from { opacity: 0; backdrop-filter: blur(0px); }
   to { opacity: 1; backdrop-filter: blur(10px); }
@@ -157,15 +170,15 @@
 }
 
 .profile-details h3 {
-  margin: 1px 0 5px;
-  font-size: 1.25rem;
+  margin: 10px 0 5px;
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .profile-details .username {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   margin: 0;
 }
 
@@ -185,13 +198,13 @@
 }
 
 .label {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-secondary);
 }
 
 .value {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--text-primary);
 }

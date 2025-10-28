@@ -941,25 +941,6 @@ function ModeratorHome() {
         );
     };
 
-    const handleBroadcastMouseEnter = (broadcastId) => {
-        const timer = timersRef.current[broadcastId];
-        if (timer) {
-            clearTimeout(timer.timerId);
-            const elapsedTime = Date.now() - timer.startTime;
-            timer.remaining -= elapsedTime;
-        }
-    };
-
-    const handleBroadcastMouseLeave = (broadcastId) => {
-        const timer = timersRef.current[broadcastId];
-        if (timer && timer.remaining > 0) {
-            timer.startTime = Date.now();
-            timer.timerId = setTimeout(() => {
-                handleCloseBroadcast(broadcastId);
-            }, timer.remaining);
-        }
-    };
-
 
 
     // Calculate the number of new reports to show in the badge
@@ -1091,14 +1072,12 @@ function ModeratorHome() {
 
 
             {/* Use the new Header Component */}
-            <Header /> 
+            <Header onProfileClick={() => setIsProfileModalOpen(true)} /> 
             {broadcasts.length > 0 && (
                 <div className="broadcast-banner-container">
                     {broadcasts.map(b => (
                         <div key={b.id} 
                              className={`broadcast-item type-${b.type}`}
-                             onMouseEnter={() => handleBroadcastMouseEnter(b.id)}
-                             onMouseLeave={() => handleBroadcastMouseLeave(b.id)}
                         >
                             <div className="broadcast-message">
                                 <FaBullhorn style={{ marginRight: '10px', flexShrink: 0 }} />

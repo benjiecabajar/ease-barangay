@@ -1,24 +1,29 @@
 /* analytics-dashboard.css - Modern Redesign */
 
 .analytics-dashboard-container {
+    display: flex;
+    flex-direction: column;
     padding: 16px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 16px;
+    /* Set a height constraint for the container */
+    height: calc(100vh - 140px); /* Adjust based on header and padding */
 }
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    margin-bottom: 1px;
+    margin-top: -20px;
 }
 
 .dashboard-header h1 {
     font-size: 24px; /* Smaller header */
     font-weight: 700;
     margin-top: 0;
-    margin-bottom: 12px;
-    color: var(--admin-text-primary);
+    margin-bottom: 5px;
+    color: var(--admin-primary-blue);
     letter-spacing: -0.5px;
 }
 
@@ -27,7 +32,7 @@
     align-items: center;
     gap: 10px;
     background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-    padding: 8px 12px; /* Reduced padding */
+    padding: 5px 12px; /* Reduced padding */
     border-radius: 12px;
     border: 1px solid var(--admin-border);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -122,8 +127,27 @@
 .analytics-tabs {
     display: flex;
     border-bottom: 2px solid var(--admin-border);
-    margin-bottom: 24px;
     gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px; /* Space for scrollbar */
+}
+
+/* Custom Scrollbar for Tabs */
+.analytics-tabs::-webkit-scrollbar {
+    height: 6px;
+}
+
+.analytics-tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.analytics-tabs::-webkit-scrollbar-thumb {
+    background-color: var(--admin-border);
+    border-radius: 10px;
+}
+
+.analytics-tabs::-webkit-scrollbar-thumb:hover {
+    background-color: var(--admin-text-secondary);
 }
 
 .analytics-tabs button {
@@ -165,14 +189,27 @@
 }
 
 .analytics-tab-content {
+    flex-grow: 1; /* Allow content to fill available space */
+    overflow-y: auto; /* Enable vertical scrolling */
     padding: 16px;
+    padding-right: 24px; /* Add space for the scrollbar */
+}
+
+/* Custom Scrollbar for the analytics content */
+.analytics-tab-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.analytics-tab-content::-webkit-scrollbar-thumb {
+    background-color: var(--admin-border);
+    border-radius: 10px;
 }
 
 .analytics-filters {
     display: flex;
-    justify-content: space-between;
+    justify-content:end;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
 }
 
 .analytics-filters select {
@@ -198,14 +235,14 @@
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Further reduced min width */
-    gap: 12px; /* Further reduced gap */
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
 }
 
 .chart-section {
-    margin-top: 24px; /* Reduced top margin */
-    padding-top: 16px; /* Reduced top padding */
-    border-top: 2px solid var(--admin-border);
+    margin-top: 1px; /* Reduced top margin */
+    padding-top: 1px; /* Reduced top padding */
+    border-top: 1px solid var(--admin-border);
 }
 
 .chart-section h4 {
@@ -473,3 +510,18 @@
 
 .skeleton-title { height: 17px; }
 .skeleton-chart-area { height: 250px; border-radius: 8px; }
+
+/* Custom Scrollbar for Post List */
+.post-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.post-list::-webkit-scrollbar-track {
+    background: var(--admin-bg);
+    border-radius: 10px;
+}
+
+.post-list::-webkit-scrollbar-thumb {
+    background-color: var(--admin-border);
+    border-radius: 10px;
+}

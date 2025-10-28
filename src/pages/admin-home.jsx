@@ -259,71 +259,40 @@ useEffect(() => {
         <div className="admin-page">
             <Header />
             <div className="admin-content">
-                <main className="admin-main-content">
+                <div className="admin-analytics-container">
                     <AdminAnalyticsDashboard
                         users={users}
                         auditLogs={auditLogs}
                         reports={reports}
                         certificationRequests={certificationRequests}
                         settings={settings}
+                        // Props for Global Content Feed
+                        processedPosts={processedPosts}
+                        postSearchTerm={postSearchTerm}
+                        setPostSearchTerm={setPostSearchTerm}
+                        sortOrder={sortOrder}
+                        setSortOrder={setSortOrder}
+                        filterCategory={filterCategory}
+                        setFilterCategory={setFilterCategory}
+                        POST_CATEGORIES={POST_CATEGORIES}
+                        handleDeletePost={handleDeletePost}
+                        getCategoryClass={getCategoryClass}
                     />
-                    <h1>Global Content Feed</h1>
-                    <div className="admin-feed-controls">
-                        <input
-                            type="text"
-                            placeholder="Search by Post ID..."
-                            value={postSearchTerm}
-                            onChange={e => setPostSearchTerm(e.target.value)}
-                        />
-                        <select id="sort-posts" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} title="Sort posts">
-                            <option value="newest">Newest First</option>
-                            <option value="oldest">Oldest First</option>
-                        </select>
-                        <select id="filter-category" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} title="Filter by category">
-                            <option value="All">All Categories</option>
-                            {POST_CATEGORIES.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="post-list">
-                        {processedPosts.length > 0 ? processedPosts.map(post => (
-                            <div key={post.id} className="admin-post-card">
-                                <div className="post-card-header">
-                                    <img src={post.authorAvatar} alt="author" className="author-avatar" />
-                                    <div>
-                                        <span className="author-name">{post.author}</span>
-                                        <span className="post-time">
-                                            {post.category && (
-                                                <span className={`post-category-badge ${getCategoryClass(post.category)}`}>{post.category}</span>
-                                            )}
-                                            {new Date(post.date).toLocaleString()}
-                                        </span>
-                                    </div>
-                                    <div className="post-actions">
-                                        <button className="action-btn delete-btn" title="Delete Post" onClick={() => handleDeletePost(post.id)}><FaTrash /></button>
-                                    </div>
-                                </div>
-                                {post.title && <h3 className="post-title">{post.title}</h3>}
-                                <p className="post-description">{post.description}</p>
-                            </div>
-                        )) : <p>No announcements found.</p>}
-                    </div>
-                </main>
+                </div>
 
                 <aside className="admin-right-panel">
                     <div className="admin-widget">
-                        <h4><FaHistory /> Audit Trail</h4>
+                        <h4 style={{ color: 'var(--admin-primary-blue)', fontWeight: 'bold' }}><FaHistory /> Audit Trail</h4>
                         <p>Review all actions taken by users and moderators across the system.</p>
                         <button onClick={() => setIsAuditModalOpen(true)}>Open Audit Viewer</button>
                     </div>
                     <div className="admin-widget">
-                        <h4><FaBullhorn /> System Broadcasts</h4>
+                        <h4 style={{ color: 'var(--admin-primary-blue)' }}><FaBullhorn /> System Broadcasts</h4>
                         <p>Send or manage high-priority messages for all users.</p>
                         <button onClick={() => setIsBroadcastModalOpen(true)}>Manage Broadcasts</button>
                     </div>
                     <div className="admin-widget">
-                        <h4 className="widget-title-container">
+                        <h4 className="widget-title-container" style={{ color: 'var(--admin-primary-blue)' }}>
                             <span><FaUsers /> User Management</span>
                             {newModeratorMessageCount > 0 && <span className="widget-badge">{newModeratorMessageCount}</span>}
                         </h4>
@@ -331,7 +300,7 @@ useEffect(() => {
                         <button onClick={() => setIsUserManagementModalOpen(true)}>Open User Dashboard</button>
                     </div>
                     <div className="admin-widget">
-                        <h4><FaCog /> System Configuration</h4>
+                        <h4 style={{ color: 'var(--admin-primary-blue)' }}><FaCog /> System Configuration</h4>
                         <p>Manage application settings, data, and integrations.</p>
                         <button onClick={() => setIsSettingsModalOpen(true)}>Open System Settings</button>
                     </div>

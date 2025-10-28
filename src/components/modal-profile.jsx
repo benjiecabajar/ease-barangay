@@ -4,10 +4,10 @@ import "../styles/modal-profile.css";
 import defaultAvatar from "../assets/default-avatar.png"; // Import the default avatar
 
 const DEFAULT_PROFILE = {
-  id: "U-12345",
-  name: "Benjie Cabajar",
-  username: "benjo",
-  email: "bjc@domain.com",
+  id: "1",
+  name: "BenCabajar",
+  username: "userName",
+  email: "email@domain.com",
   municipality: "Villanueva",
   barangay: "Poblacion",
   role: "Resident",
@@ -76,8 +76,8 @@ const ProfileModal = ({ isOpen, onClose, onLogout }) => {
         <div className="profile-details">
           <div className="avatar-container" onClick={handleAvatarClick}>
             <img
-              src={userProfile.avatar}
-              alt="User Avatar"
+              src={userProfile.avatar || defaultAvatar}
+              alt="Add Profile"
               className="profile-avatar-large"
             />
             <div className="avatar-edit-overlay">
