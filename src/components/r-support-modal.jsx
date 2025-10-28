@@ -18,10 +18,6 @@ const AccordionItem = ({ title, children }) => {
 const SupportModal = ({ isOpen, onClose, onReportUser, initialReportedUser }) => {
     if (!isOpen) return null;
 
-    const [reportedUserName, setReportedUserName] = useState('');
-    const [reportReason, setReportReason] = useState('');
-    const reportSectionRef = useRef(null);
-
     // State for the new contact form
     const [isContactFormVisible, setIsContactFormVisible] = useState(false);
     const [issueType, setIssueType] = useState('');
@@ -35,39 +31,13 @@ const SupportModal = ({ isOpen, onClose, onReportUser, initialReportedUser }) =>
     // Listen for the custom event to scroll to the report section
     useEffect(() => {
         const handler = (e) => {
-            const payload = e?.detail || {};
             if (!isOpen) return; // Only act if the modal is open
-
-            if (payload.reportedUser) {
-                setReportedUserName(payload.reportedUser);
-            }
-
-            // Scroll the report area into view and focus the textarea
-            if (reportSectionRef.current) {
-                reportSectionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-                reportSectionRef.current.querySelector('textarea')?.focus();
-            }
+            // This handler is now empty but kept in case of future use for other events.
         };
 
         window.addEventListener("openSupportReport", handler);
         return () => window.removeEventListener("openSupportReport", handler);
-    }, [isOpen]); // Re-run if the modal's open state changes
-
-
-    useEffect(() => {
-        if (isOpen) {
-            setReportedUserName(initialReportedUser || '');
-            setReportReason(''); // Always clear reason
-
-            if (initialReportedUser && reportSectionRef.current) {
-                // Use a timeout to ensure the modal is fully rendered before scrolling
-                setTimeout(() => {
-                    reportSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
-            }
-        }
-    }, [isOpen, initialReportedUser]);
-
+    }, [isOpen]);
 
     const faqs = [
         {
@@ -92,21 +62,28 @@ const SupportModal = ({ isOpen, onClose, onReportUser, initialReportedUser }) =>
         }
     ];
 
-    const handleReportSubmit = (e) => {
-        e.preventDefault();
-        if (reportedUserName.trim() && reportReason.trim()) {
-            onReportUser(reportedUserName, reportReason);
-            setReportedUserName('');
-            setReportReason('');
-        }
-    };
-
     const handleContactAdminSubmit = (e) => {
         e.preventDefault();
         if (issueType && issueDescription.trim()) {
             setContactSubmissionStatus('submitting');
-            console.log('Submitting to admin:', { issueType, issueDescription });
-            // Simulate API call
+            
+            // Get user info to attach to the message
+            const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+
+            // Get current moderator inbox and add the new message
+            const moderatorInbox = JSON.parse(localStorage.getItem('moderatorInbox')) || [];
+            const newInboxMessage = {
+                id: `resident-inquiry-${Date.now()}`,
+                subject: `Inquiry from Resident: ${issueType}`,
+                body: issueDescription,
+                from: userProfile?.name || 'Unknown Resident',
+                userId: userProfile?.id,
+                date: Date.now(),
+                isRead: false,
+            };
+            localStorage.setItem('moderatorInbox', JSON.stringify([newInboxMessage, ...moderatorInbox]));
+
+            // Simulate API call and UI feedback
             setTimeout(() => {
                 setContactSubmissionStatus('success');
                 setTimeout(() => {
@@ -117,6 +94,36 @@ const SupportModal = ({ isOpen, onClose, onReportUser, initialReportedUser }) =>
                 }, 2000);
             }, 1500);
         }
+    };
+
+    const renderContactForm = () => {
+        if (contactSubmissionStatus === 'submitting') {
+            return <div className="submission-overlay-local"><div className="spinner"></div><p>Sending your message...</p></div>;
+        }
+        if (contactSubmissionStatus === 'success') {
+            return <div className="contact-success-message"><FaCheckCircle /> Your message has been sent. The administrator will get back to you shortly.</div>;
+        }
+        return (
+            <form onSubmit={handleContactAdminSubmit} className="contact-admin-form">
+                <div className="form-group">
+                    <label htmlFor="issue-type">Issue Type</label>
+                    <select id="issue-type" value={issueType} onChange={(e) => setIssueType(e.target.value)} required>
+                        <option value="" disabled>Select an issue type...</option>
+                        {ISSUE_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                    </select>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="issue-description">Description</label>
+                    <textarea id="issue-description" value={issueDescription} onChange={(e) => setIssueDescription(e.target.value)} placeholder="Please describe in detail..." required></textarea>
+                </div>
+                <div className="contact-form-actions">
+                    <button type="button" className="cancel-contact-btn" onClick={() => setIsContactFormVisible(false)}>Cancel</button>
+                    <button type="submit" className="submit-contact-btn" disabled={!issueType || !issueDescription.trim() || contactSubmissionStatus === 'submitting'}>
+                        {contactSubmissionStatus === 'submitting' ? 'Sending...' : 'Send Message'}
+                    </button>
+                </div>
+            </form>
+        );
     };
 
     return (
@@ -140,75 +147,14 @@ const SupportModal = ({ isOpen, onClose, onReportUser, initialReportedUser }) =>
                         ))}
                     </div>
 
-                    <div className="report-user-section" ref={reportSectionRef}>
-                        <h4><FaExclamationTriangle /> Report a Resident</h4>
-                        <p>If you are experiencing issues with another resident, you can submit a report here. A moderator will review it.</p>
-                        <form onSubmit={handleReportSubmit}>
-                            <div className="form-group">
-                                <label htmlFor="resident-name-resident-report">Resident's Full Name</label>
-                                <input
-                                    id="resident-name-resident-report"
-                                    type="text"
-                                    value={reportedUserName}
-                                    onChange={(e) => setReportedUserName(e.target.value)}
-                                    placeholder="Enter the full name of the resident"
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="report-reason-resident-report">Reason for Reporting</label>
-                                <textarea
-                                    id="report-reason-resident-report"
-                                    value={reportReason}
-                                    onChange={(e) => setReportReason(e.target.value)}
-                                    placeholder="Describe the issue or violation..."
-                                    required
-                                ></textarea>
-                            </div>
-                            <button type="submit" className="report-submit-btn" disabled={!reportedUserName.trim() || !reportReason.trim()}>Submit Report to Moderator</button>
-                        </form>
-                    </div>
-
                     <div className="contact-support-section">
                         <h4>Need More Help?</h4>
                         <p>If you're experiencing a technical issue or have a question not answered above, please contact the system administrator.</p>
                         {!isContactFormVisible ? (
                             <button onClick={() => setIsContactFormVisible(true)} className="contact-btn">
-                                Contact Administrator
+                                Contact Moderator
                             </button>
-                        ) : (
-                            contactSubmissionStatus === 'success' ? (
-                                <div className="contact-success-message">
-                                    <FaCheckCircle /> Your message has been sent. The administrator will get back to you shortly.
-                                </div>
-                            ) : (
-                                <form onSubmit={handleContactAdminSubmit} className="contact-admin-form">
-                                    <div className="form-group">
-                                        <label htmlFor="issue-type">Issue Type</label>
-                                        <select id="issue-type" value={issueType} onChange={(e) => setIssueType(e.target.value)} required>
-                                            <option value="" disabled>Select an issue type...</option>
-                                            {ISSUE_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="issue-description">Description</label>
-                                        <textarea
-                                            id="issue-description"
-                                            value={issueDescription}
-                                            onChange={(e) => setIssueDescription(e.target.value)}
-                                            placeholder="Please describe in detail..."
-                                            required
-                                        ></textarea>
-                                    </div>
-                                    <div className="contact-form-actions">
-                                        <button type="button" className="cancel-contact-btn" onClick={() => setIsContactFormVisible(false)}>Cancel</button>
-                                        <button type="submit" className="submit-contact-btn" disabled={!issueType || !issueDescription.trim() || contactSubmissionStatus === 'submitting'}>
-                                            {contactSubmissionStatus === 'submitting' ? 'Sending...' : 'Send Message'}
-                                        </button>
-                                    </div>
-                                </form>
-                            )
-                        )}
+                        ) : renderContactForm()}
                     </div>
 
                     <div className="system-info-footer">

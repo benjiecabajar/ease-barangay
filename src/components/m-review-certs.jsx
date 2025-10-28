@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes, FaRegSadTear, FaEye, FaBan, FaCheckCircle, FaChevronLeft, FaTrash, FaSyncAlt } from 'react-icons/fa';
 import '../styles/m-review-certs.css';
 
@@ -19,8 +19,6 @@ const ReviewCertsModal = ({ isOpen, onClose, requests, onUpdateStatus, onDeleteR
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('All');
     const [loadingAction, setLoadingAction] = useState(null); // null, 'approving', 'declining', 'deleting'
-
-    if (!isOpen) return null;
 
     const handleStatusUpdate = (newStatus) => {
         if (selectedRequest) {
@@ -43,6 +41,17 @@ const ReviewCertsModal = ({ isOpen, onClose, requests, onUpdateStatus, onDeleteR
             }
         }
     };
+
+    // This effect ensures that if the underlying request data changes (e.g., status update),
+    // the detailed view is updated with the latest information.
+    useEffect(() => {
+        if (selectedRequest) {
+            const updatedRequest = requests.find(r => r.id === selectedRequest.id);
+            if (updatedRequest) setSelectedRequest(updatedRequest);
+        }
+    }, [requests, selectedRequest]);
+
+    if (!isOpen) return null;
 
     const handleDeleteClick = () => {
         if (selectedRequest) {

@@ -284,6 +284,7 @@ export default function SignIn() {
           password: form.password, // In a real app, this would be hashed and not stored client-side
           role: 'resident',
           status: 'active', // 'active', 'suspended', 'deactivated'
+          createdAt: Date.now(),
           verified: false, // Email verification status
           ...form // include other form details like name, dob, etc.
         };

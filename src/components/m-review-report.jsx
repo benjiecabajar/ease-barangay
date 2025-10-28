@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaTimes,
   FaRegSadTear,
@@ -49,8 +49,6 @@ const ReviewReportModal = ({ isOpen, onClose, reports, onUpdateReportStatus, onD
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [modalImages, setModalImages] = useState([]);
 
-  if (!isOpen) return null;
-
   const handleSelectReport = (report) => {
     // Immediately set the selected report for viewing
     setSelectedReport(report);
@@ -59,6 +57,17 @@ const ReviewReportModal = ({ isOpen, onClose, reports, onUpdateReportStatus, onD
       onUpdateReportStatus(report.id, 'reviewed');
     }
   };
+
+  // This effect ensures that if the underlying report data changes (e.g., status update),
+  // the detailed view is updated with the latest information.
+  useEffect(() => {
+      if (selectedReport) {
+          const updatedReport = reports.find(r => r.id === selectedReport.id);
+          if (updatedReport) setSelectedReport(updatedReport);
+      }
+  }, [reports, selectedReport]);
+
+  if (!isOpen) return null;
 
   const handleStatusUpdate = (newStatus) => {
     if (selectedReport) {

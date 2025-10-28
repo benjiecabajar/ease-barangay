@@ -736,19 +736,17 @@
 
 .moderator-actions {
   margin-top: 2rem;
-  padding-top: 1.5rem;
+  padding: 1.5rem 0;
   border-top: 1px solid var(--border-primary);
-}
-
-.primary-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
-.secondary-actions {
+.primary-actions, .secondary-actions {
   display: flex;
+  flex: 1 1 100%; /* Allow groups to take full width and wrap */
   gap: 12px;
-  margin-top: 10px;
 }
 
 .action-btn {
@@ -779,9 +777,27 @@
 }
 
 .secondary-actions .action-btn:hover:not(:disabled) {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--bg-tertiary);
   border-color: var(--border-secondary);
+}
+
+.action-btn.progress {
+    background: linear-gradient(135deg, #3b82f6, #2563eb); /* Blue gradient */
+    color: white;
+}
+
+.action-btn.resolve {
+    background: linear-gradient(135deg, #22c55e, #16a34a); /* Green gradient */
+    color: white;
+}
+
+.secondary-actions .action-btn.progress:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white; /* Ensure text stays white on hover */
+}
+
+.secondary-actions .action-btn.resolve:hover:not(:disabled) {
+    background: linear-gradient(135deg, #16a34a, #15803d);
 }
 
 .action-btn:hover:not(:disabled) {

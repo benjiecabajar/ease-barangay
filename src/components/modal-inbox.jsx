@@ -74,7 +74,7 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete, onClear
                                         <h5>MUNICIPALITY OF {selectedMessage.details?.municipality || 'VILLANUEVA'}</h5>
                                         <h1>Barangay {selectedMessage.details?.barangay || 'Poblacion 1'}</h1>
                                     </div>
-                                    <div className="cert-body">
+                                    <div className="cert-body" style={{ textAlign: 'left' }}>
                                         <p>This is to certify that <strong>{`${selectedMessage.details?.firstName || ''} ${selectedMessage.details?.middleName || ''} ${selectedMessage.details?.lastName || ''}`.trim()}</strong>, a resident of this barangay, has been granted a <strong>{selectedMessage.certificateType}</strong> for the purpose of "{selectedMessage.purpose}".</p>
                                         <p>This certification is issued upon the request of the above-named person for whatever legal purpose it may serve.</p>
                                         <p>Issued this {new Date(selectedMessage.dateApproved).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })} at the Barangay Hall.</p>
@@ -87,9 +87,21 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete, onClear
                                     </div>
                                 </div>
                             )}
-                            <div className="details-footer">
-                                <button className="print-btn" onClick={handlePrint}><FaPrint /> Print</button>
-                            </div>
+                            {selectedMessage.type === 'moderator_reply' && (
+                                <div className="details-content">
+                                    <h4>{selectedMessage.certificateType}</h4>
+                                    <p className="message-from">From: {selectedMessage.details.firstName}</p>
+                                    {selectedMessage.originalMessageBody && (
+                                        <blockquote className="original-message-quote">"{selectedMessage.originalMessageBody}"</blockquote>
+                                    )}
+                                    <p className="message-body-text">{selectedMessage.purpose}</p>
+                                </div>
+                            )}
+                            {selectedMessage.type === 'approved_certificate' && (
+                                <div className="details-footer">
+                                    <button className="print-btn" onClick={handlePrint}><FaPrint /> Print</button>
+                                </div>
+                            )}
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="no-items-placeholder">
@@ -107,8 +119,12 @@ const InboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete, onClear
                                 >
                                     <div className="message-icon"></div>
                                     <div className="message-summary">
-                                        <span className="message-title">Certificate Approved</span>
-                                        <span className="message-subtitle">Your request for {msg.certificateType} is ready.</span>
+                                        <span className="message-title">
+                                            {msg.type === 'approved_certificate' ? 'Certificate Approved' : msg.certificateType}
+                                        </span>
+                                        <span className="message-subtitle">
+                                            {msg.type === 'approved_certificate' ? `Your request for ${msg.certificateType} is ready.` : msg.purpose.substring(0, 80) + '...'}
+                                        </span>
                                     </div>
                                     <span className="message-date">
                                         {new Date(msg.dateApproved).toLocaleDateString()}

@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 import "react-calendar/dist/Calendar.css";
 import "../styles/admin-home.css";
 import {
-    FaBullhorn, FaHistory, FaEdit, FaTrash, FaTimes, FaFilter, FaSortAmountDown, FaSortAmountUp
-} from "react-icons/fa";
+    FaBullhorn, FaHistory, FaTrash, FaTimes, FaFilter, FaSortAmountDown, FaSortAmountUp, FaCog, FaUsers
+} from "react-icons/fa"; // Added FaCog, FaUsers
 
 import { logAuditAction } from "../utils/auditLogger";
 import UserManagementModal from "../components/admin-user-management.jsx";
 import SystemSettingsModal from "../components/admin-system-settings.jsx";
+import AdminAnalyticsDashboard from "../components/admin-analytics-dashboard.jsx";
 import Header from "../components/header"; // Assuming a shared Header component
 
 // A simple modal component structure
@@ -40,7 +41,10 @@ function AdminHome() {
     const [broadcasts, setBroadcasts] = useState([]);
     const [users, setUsers] = useState([]);
     const [settings, setSettings] = useState({});
+    const [reports, setReports] = useState([]);
+    const [certificationRequests, setCertificationRequests] = useState([]);
     const [disputeReports, setDisputeReports] = useState([]);
+    const [adminMessages, setAdminMessages] = useState([]);
 
     // Modal states
     const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
@@ -82,42 +86,72 @@ function AdminHome() {
 
 
     // Load data from localStorage on component mount
-    useEffect(() => {
-        const loadedPosts = JSON.parse(localStorage.getItem("announcements")) || [];        
-        const adminLogs = JSON.parse(localStorage.getItem("admin_auditLogs")) || [];
-        const moderatorLogs = JSON.parse(localStorage.getItem("moderator_auditLogs")) || [];
-        const residentLogs = JSON.parse(localStorage.getItem("resident_auditLogs")) || [];
-        const loadedLogs = [...adminLogs, ...moderatorLogs, ...residentLogs].sort((a, b) => b.timestamp - a.timestamp);
+useEffect(() => { 
+        const loadData = () => {
+            const loadedPosts = JSON.parse(localStorage.getItem("announcements")) || [];        
+            const adminLogs = JSON.parse(localStorage.getItem("admin_auditLogs")) || [];
+            const moderatorLogs = JSON.parse(localStorage.getItem("moderator_auditLogs")) || [];
+            const residentLogs = JSON.parse(localStorage.getItem("resident_auditLogs")) || [];
+            const loadedLogs = [...adminLogs, ...moderatorLogs, ...residentLogs].sort((a, b) => b.timestamp - a.timestamp);
+    
+            const loadedBroadcasts = JSON.parse(localStorage.getItem("systemBroadcasts")) || [];        
+            const loadedUsers = JSON.parse(localStorage.getItem("users")) || [];
+            let loadedSettings = JSON.parse(localStorage.getItem("system_settings"));
+    
+            // If no settings exist, create and save default ones
+            if (!loadedSettings) {
+                loadedSettings = {
+                    locations: {
+                        "Villanueva": ["Balacanas", "Dayawan", "Imelda", "Katipunan", "Kimaya", "Looc", "Poblacion 1", "Poblacion 2", "Poblacion 3", "San Martin", "Tambobong"],
+                        "Tagoloan": ["Baluarte", "Casinglot", "Mohon", "Natumolan", "Rosario", "Santa Ana", "Santa Cruz", "Sugbongcogon"]
+                    },
+                    announcementCategories: ['General', 'Event', 'Health Advisory', 'Safety Alert', 'Community Program', 'Traffic Update', 'Weather Alert', 'Maintenance Notice', 'Other'],
+                    reportCategories: ['General Maintenance', 'Safety Hazard', 'Noise Complaint', 'Pest Control', 'Facilities Issue']
+                };
+                localStorage.setItem('system_settings', JSON.stringify(loadedSettings));
+                logAuditAction('Initialized Default System Settings', {}, 'system');
+            }
+    
+            const loadedReports = JSON.parse(localStorage.getItem("userReports")) || [];
+            const loadedCerts = JSON.parse(localStorage.getItem("certificationRequests")) || [];
+            const loadedDisputes = JSON.parse(localStorage.getItem("disputeReports")) || [];
+            const loadedAdminMessages = JSON.parse(localStorage.getItem("adminContactMessages")) || [];
+    
+            setPosts(loadedPosts.sort((a, b) => new Date(b.date) - new Date(a.date))); // Default sort: newest first
+            setUsers(loadedUsers);
+            setAuditLogs(loadedLogs);
+            setSettings(loadedSettings);
+            setAdminMessages(loadedAdminMessages);
+            setCertificationRequests(loadedCerts);
+            setDisputeReports(loadedDisputes);
+            setReports(loadedReports);
+            setBroadcasts(loadedBroadcasts);
+        };
 
-        const loadedBroadcasts = JSON.parse(localStorage.getItem("systemBroadcasts")) || [];        
-        const loadedUsers = JSON.parse(localStorage.getItem("users")) || [];
-        let loadedSettings = JSON.parse(localStorage.getItem("system_settings"));
+        loadData(); // Initial load
 
-        // If no settings exist, create and save default ones
-        if (!loadedSettings) {
-            loadedSettings = {
-                locations: {
-                    "Villanueva": ["Balacanas", "Dayawan", "Imelda", "Katipunan", "Kimaya", "Looc", "Poblacion 1", "Poblacion 2", "Poblacion 3", "San Martin", "Tambobong"],
-                    "Tagoloan": ["Baluarte", "Casinglot", "Mohon", "Natumolan", "Rosario", "Santa Ana", "Santa Cruz", "Sugbongcogon"]
-                },
-                certificationTypes: ["Barangay Clearance", "Certificate of Residency", "Certificate of Indigency", "Certificate of Good Moral Character"],
-                announcementCategories: ['General', 'Event', 'Health Advisory', 'Safety Alert', 'Community Program', 'Traffic Update', 'Weather Alert', 'Maintenance Notice', 'Other'],
-                reportCategories: ['General Maintenance', 'Safety Hazard', 'Noise Complaint', 'Pest Control', 'Facilities Issue']
-            };
-            localStorage.setItem('system_settings', JSON.stringify(loadedSettings));
-            logAuditAction('Initialized Default System Settings', {}, 'system');
-        }
+        // Listen for changes from other tabs
+        const handleStorageChange = (e) => {
+            // Check if any of the relevant keys have changed
+            if (['disputeReports', 'adminContactMessages', 'users', 'announcements', 'userReports', 'systemBroadcasts', 'system_settings'].includes(e.key) || !e.key) {
+                loadData();
+            }
+        };
 
-        const loadedDisputes = JSON.parse(localStorage.getItem("disputeReports")) || [];
+        window.addEventListener('storage', handleStorageChange);
 
-        setPosts(loadedPosts.sort((a, b) => new Date(b.date) - new Date(a.date))); // Default sort: newest first
-        setUsers(loadedUsers);
-        setAuditLogs(loadedLogs);
-        setSettings(loadedSettings);
-        setBroadcasts(loadedBroadcasts);
-    }, []);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []); // This useEffect runs once on initial load
 
-    // --- Super-Moderation: Content Management ---
+    const newModeratorMessageCount = useMemo(() => {
+        const openDisputes = disputeReports.filter(report => report.status === 'open').length;
+        const openMessages = adminMessages.filter(message => message.status === 'open').length;
+        return openDisputes + openMessages;
+    }, [disputeReports, adminMessages]);
+
+    // --- Super-Moderation: Content Management --- 
     const handleDeletePost = (postId) => {
         if (window.confirm("Are you sure you want to permanently delete this post? This action cannot be undone.")) {
             const updatedPosts = posts.filter(p => p.id !== postId);
@@ -221,10 +255,18 @@ function AdminHome() {
     };
 
     return (
+        
         <div className="admin-page">
             <Header />
             <div className="admin-content">
                 <main className="admin-main-content">
+                    <AdminAnalyticsDashboard
+                        users={users}
+                        auditLogs={auditLogs}
+                        reports={reports}
+                        certificationRequests={certificationRequests}
+                        settings={settings}
+                    />
                     <h1>Global Content Feed</h1>
                     <div className="admin-feed-controls">
                         <input
@@ -259,7 +301,6 @@ function AdminHome() {
                                         </span>
                                     </div>
                                     <div className="post-actions">
-                                        <button className="action-btn edit-btn" title="Edit Post (Not Implemented)"><FaEdit /></button>
                                         <button className="action-btn delete-btn" title="Delete Post" onClick={() => handleDeletePost(post.id)}><FaTrash /></button>
                                     </div>
                                 </div>
@@ -282,12 +323,15 @@ function AdminHome() {
                         <button onClick={() => setIsBroadcastModalOpen(true)}>Manage Broadcasts</button>
                     </div>
                     <div className="admin-widget">
-                        <h4><FaBullhorn /> User Management</h4>
+                        <h4 className="widget-title-container">
+                            <span><FaUsers /> User Management</span>
+                            {newModeratorMessageCount > 0 && <span className="widget-badge">{newModeratorMessageCount}</span>}
+                        </h4>
                         <p>Control user accounts, manage roles, and resolve disputes.</p>
                         <button onClick={() => setIsUserManagementModalOpen(true)}>Open User Dashboard</button>
                     </div>
                     <div className="admin-widget">
-                        <h4><FaBullhorn /> System Configuration</h4>
+                        <h4><FaCog /> System Configuration</h4>
                         <p>Manage application settings, data, and integrations.</p>
                         <button onClick={() => setIsSettingsModalOpen(true)}>Open System Settings</button>
                     </div>
@@ -295,7 +339,7 @@ function AdminHome() {
             </div>
 
             {/* Audit Trail Modal */}
-            <Modal isOpen={isAuditModalOpen} onClose={() => setIsAuditModalOpen(false)} title="Audit Trail Viewer">
+            <Modal isOpen={isAuditModalOpen} onClose={() => setIsAuditModalOpen(false)} title="Audit Trail">
                 <div className="audit-filters">
                     <input type="text" placeholder="Search by User Name or ID..." value={logSearchTerm} onChange={e => setLogSearchTerm(e.target.value)} />
                     <select value={logFilterType} onChange={e => setLogFilterType(e.target.value)}>
@@ -352,7 +396,7 @@ function AdminHome() {
             </Modal>
 
             {/* Broadcast Modal */}
-            <Modal isOpen={isBroadcastModalOpen} onClose={() => setIsBroadcastModalOpen(false)} title="System-Wide Broadcasts">
+            <Modal isOpen={isBroadcastModalOpen} onClose={() => setIsBroadcastModalOpen(false)} title="System Broadcasts">
                 <div className="broadcast-form">
                     <h4>Create New Broadcast</h4>
                     <textarea
@@ -388,6 +432,10 @@ function AdminHome() {
                 users={users}
                 setUsers={setUsers}
                 disputeReports={disputeReports}
+                setDisputeReports={setDisputeReports}
+                adminMessages={adminMessages}
+                setAdminMessages={setAdminMessages}
+                settings={settings}
             />
 
             <SystemSettingsModal

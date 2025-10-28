@@ -582,6 +582,33 @@ function ModeratorHome() {
         }
     };
 
+    const handleSendReplyToResident = (originalMessage, replyText) => {
+        const residentInbox = JSON.parse(localStorage.getItem('residentInbox')) || [];
+        const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+
+        const newInboxMessage = {
+            id: `mod-reply-${Date.now()}`,
+            type: 'moderator_reply',
+            certificateType: `Re: ${originalMessage.subject}`, // Re-using this field for subject
+            purpose: replyText, // Re-using this field for body
+            originalMessageBody: originalMessage.body, // Pass original message for context
+            details: {
+                firstName: userProfile?.name || 'Moderator',
+                lastName: '',
+            },
+            dateApproved: Date.now(), // Re-using this for date
+            isRead: false,
+        };
+
+        localStorage.setItem('residentInbox', JSON.stringify([newInboxMessage, ...residentInbox]));
+        logAuditAction('Replied to Resident Inquiry', { residentId: originalMessage.userId, subject: originalMessage.subject }, 'moderator');
+
+        // Mark the original message in the moderator's inbox as replied
+        const updatedModInbox = moderatorInbox.map(msg => msg.id === originalMessage.id ? { ...msg, status: 'replied' } : msg);
+        setModeratorInbox(updatedModInbox);
+        alert('Your reply has been sent to the resident.');
+    };
+
     const handleClosePostModal = () => {
         setIsPostModalOpen(false);
         setEditingPost(null); // Clear editing state
@@ -643,6 +670,12 @@ function ModeratorHome() {
         setReportingUser(comment.author); // Pass the author's name
         setIsSupportModalOpen(true); // Open the main support modal
         logAuditAction('Opened Report Form for Comment', { reportedUser: comment.author, commentId: comment.id }, 'moderator');
+    };
+
+    const handleReportUserSubmit = (reportedUserName, reason) => {
+        // This function is now responsible for logging the action.
+        // The SupportModal will handle saving the report to localStorage.
+        logAuditAction('Reported Resident to Admin', { reportedUser: reportedUserName, reason }, 'moderator');
     };
 
     const handleReportCommentSubmit = (user, reason) => {
@@ -1034,6 +1067,7 @@ function ModeratorHome() {
             <SupportModal
                 isOpen={isSupportModalOpen}
                 onClose={() => setIsSupportModalOpen(false)}
+                onReportUser={handleReportUserSubmit}
                 initialReportedUser={reportingUser}
             />
 
@@ -1044,6 +1078,7 @@ function ModeratorHome() {
                 onMarkAsRead={handleMarkInboxAsRead}
                 onDelete={handleDeleteInboxMessage}
                 onClearAll={handleClearInbox}
+                onReply={handleSendReplyToResident}
                 submissionStatus={inboxClearStatus}
             />
 

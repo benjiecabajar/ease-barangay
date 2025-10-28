@@ -189,12 +189,6 @@ const SystemSettingsModal = ({ isOpen, onClose, settings, setSettings }) => {
                         </div>
 
                         <EditableList
-                            title="Certification Types"
-                            items={settings.certificationTypes || []}
-                            onAdd={(item) => handleAddItem('certificationTypes', item)}
-                            onRemove={(item) => handleRemoveItem('certificationTypes', item)}
-                        />
-                        <EditableList
                             title="Announcement Categories"
                             items={settings.announcementCategories || []}
                             onAdd={(item) => handleAddItem('announcementCategories', item)}

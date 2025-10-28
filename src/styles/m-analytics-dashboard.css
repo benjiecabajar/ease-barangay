@@ -85,9 +85,9 @@
 /* STATISTICS SECTION            */
 /* ============================= */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Make cards even narrower */
+  gap: 0.6rem; /* Further reduce gap */
 }
 
 .stats-container {
@@ -104,28 +104,18 @@
 
 .stat-card {
     background: var(--bg-secondary);
-    border-radius: 14px;
-    padding: 0.5rem 0.75rem; /* Adjusted padding for a cleaner look */
-    padding: 0.2rem 0.75rem; /* Further reduced vertical padding */
+    border-radius: 12px;
+    padding: 0.2rem 0.6rem; /* Reduced padding */
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Slightly reduced gap */
+    gap: 0.6rem; /* Reduced gap */
     border: 1px solid var(--border-primary);
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
 }
 
-.stat-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    border-radius: 14px 0 0 14px;
-    background: var(--card-color, var(--brand-primary));
-}
+
 
 .stat-card:hover {
     transform: translateY(-3px);
@@ -133,15 +123,10 @@
 }
 
 .stat-icon {
-    font-size: 1.3rem; /* Further reduced icon size */
-    font-size: 1.2rem; /* Smaller icon */
-    color: var(--card-color, var(--brand-primary));
-    background: rgba(0,0,0,0.05);
-    border-radius: 50%;
-    width: 36px; /* Further reduced container size */
-    height: 36px; /* Further reduced container size */
-    width: 32px; /* Smaller container */
-    height: 32px; /* Smaller container */
+    font-size: 0.9rem; /* Even smaller icon */
+    border-radius: 8px;
+    width: 26px; /* Even smaller container */
+    height: 26px; /* Even smaller container */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -154,18 +139,59 @@
 }
 
 .stat-value {
-    font-size: 1.5rem; /* Further reduced font size */
-    font-size: 1.4rem; /* Smaller value font */
+    font-size: 1.1rem; /* Even smaller value font */
     font-weight: 700;
     color: var(--text-primary);
 }
 
 .stat-label {
-    font-size: 0.75rem; /* Further reduced font size */
-    font-size: 0.7rem; /* Smaller label font */
+    font-size: 0.55rem; /* Even smaller label font */
     color: var(--text-secondary);
     font-weight: 500;
 }
+
+/* ============================= */
+/* SKELETON LOADING STYLES       */
+/* ============================= */
+.skeleton {
+  background-color: var(--border-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+[data-theme="dark"] .skeleton::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+.skeleton-card {
+  background-color: var(--bg-secondary);
+}
+
+.skeleton-icon { border-radius: 8px; width: 26px; height: 26px; }
+.skeleton-line { border-radius: 4px; }
+.skeleton-value { width: 40px; height: 1.1rem; margin-bottom: 4px; }
+.skeleton-label { width: 80px; height: 0.55rem; }
+
+.skeleton-title { height: 1.1rem; }
+.skeleton-chart-area { height: 120px; border-radius: 8px; }
+
 
 /* ============================= */
 /* RECENT ACTIVITY SECTION       */
@@ -266,16 +292,16 @@
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+    gap: 0.75rem; /* Reduced gap */
     background: var(--bg-secondary);
-    padding: 1.25rem;
+    padding: 1rem; /* Reduced padding */
     border-radius: 14px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .chart-container {
     background: var(--bg-primary);
-    padding: 1rem;
+    padding: 0.75rem; /* Reduced padding */
     border-radius: 10px;
     border: 1px solid var(--border-primary);
     box-shadow: inset 0 0 8px rgba(0,0,0,0.04);
@@ -285,7 +311,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem; /* Reduced margin */
     text-align: center;
 }
 
@@ -302,12 +328,12 @@
 /* --- NEW: Activity Summary Styles --- */
 .time-summary-container {
     background: var(--bg-secondary);
-    padding: 1.25rem;
+    padding: 1rem; /* Reduced padding */
     border-radius: 14px;
     border: 1px solid var(--border-primary);
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem; /* Reduced gap */
 }
 
 .summary-row {
@@ -325,12 +351,12 @@
 .summary-stat { text-align: center; }
 .summary-value {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem; /* Smaller font */
     color: var(--text-primary);
 }
 .summary-label {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.7rem; /* Smaller font */
     color: var(--text-secondary);
 }
 

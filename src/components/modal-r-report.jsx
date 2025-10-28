@@ -2,18 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaTimes, FaCamera, FaUpload, FaPaperPlane, FaMapMarkerAlt, FaSyncAlt, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; 
 import '../styles/modal-r-report.css';
 
-const REPORT_TYPES = [
-  'General Maintenance',
-  'Safety Hazard',
-  'Noise Complaint',
-  'Pest Control',
-  'Facilities Issue',
-];
-
 const ReportModal = ({ isOpen, onClose, onSubmit, submissionStatus }) => {
   if (!isOpen) return null;
 
-  const [reportType, setReportType] = useState(REPORT_TYPES[0]);
+  const [reportCategories, setReportCategories] = useState([]);
+  const [reportType, setReportType] = useState('');
   const [description, setDescription] = useState('');
   const [mediaFiles, setMediaFiles] = useState([]);
   const [mediaPreviews, setMediaPreviews] = useState([]);
@@ -37,6 +30,20 @@ const ReportModal = ({ isOpen, onClose, onSubmit, submissionStatus }) => {
         setLocation(null);
         setMediaFiles([]);
         setMediaPreviews([]);
+      }
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const systemSettings = JSON.parse(localStorage.getItem("system_settings")) || {};
+      const defaultCategories = [
+        'General Maintenance', 'Safety Hazard', 'Noise Complaint', 'Pest Control', 'Facilities Issue'
+      ];
+      const categories = systemSettings.reportCategories || defaultCategories;
+      setReportCategories(categories);
+      if (categories.length > 0 && !reportType) {
+        setReportType(categories[0]);
       }
     };
   }, [isOpen]);
@@ -173,7 +180,7 @@ const ReportModal = ({ isOpen, onClose, onSubmit, submissionStatus }) => {
             {submissionStatus === 'submitting' && (
               <>
                 <div className="spinner"></div>
-                <p>Submitting your report...</p>
+                <p>Sending your report...</p>
               </>
             )}
             {submissionStatus === 'success' && (
@@ -225,7 +232,7 @@ const ReportModal = ({ isOpen, onClose, onSubmit, submissionStatus }) => {
               onChange={(e) => setReportType(e.target.value)}
               required
             >
-              {REPORT_TYPES.map((type) => (
+              {reportCategories.map((type) => (
                 <option key={type} value={type}>{type}</option>
               ))}
             </select>

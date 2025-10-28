@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { FaTimes, FaRegSadTear, FaTrash, FaCheckCircle } from 'react-icons/fa';
+import { FaTimes, FaRegSadTear, FaTrash, FaCheckCircle, FaReply } from 'react-icons/fa';
 import '../styles/m-inbox-modal.css'; // Using a separate CSS file for moderator-specific styles
 
-const ModeratorInboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete, onClearAll, submissionStatus }) => {
+const ModeratorInboxModal = ({ 
+    isOpen, 
+    onClose, 
+    messages, 
+    onMarkAsRead, 
+    onDelete, 
+    onClearAll, 
+    submissionStatus,
+    onReply, // New prop for handling reply logic
+}) => {
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [deletingMessageId, setDeletingMessageId] = useState(null);
-
+    const [replyText, setReplyText] = useState('');
     if (!isOpen) return null;
 
     const handleMessageClick = (message) => {
@@ -13,6 +22,7 @@ const ModeratorInboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete
         if (!message.isRead) {
             onMarkAsRead(message.id);
         }
+        setReplyText(''); // Reset reply text when opening a message
     };
 
     const handleDeleteClick = (e, messageId) => {
@@ -23,6 +33,17 @@ const ModeratorInboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete
             setDeletingMessageId(null);
         }, 500); // Match animation duration
     };
+
+    const handleReplySubmit = (e) => {
+        e.preventDefault();
+        if (replyText.trim() && selectedMessage) {
+            onReply(selectedMessage, replyText);
+            setReplyText('');
+            // After replying, go back to the main inbox list to see the "Replied" tag.
+            setSelectedMessage(null);
+        }
+    };
+
 
     const sortedMessages = [...messages].sort((a, b) => b.date - a.date);
 
@@ -47,7 +68,7 @@ const ModeratorInboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete
                 )}
 
                 <div className="modal-header">
-                    <h2>{selectedMessage ? 'Message Details' : 'Moderator Inbox'}</h2>
+                    <h2>{selectedMessage ? 'Message Details' : 'Inbox'}</h2>
                     <button className="close-btn" onClick={() => { setSelectedMessage(null); onClose(); }}><FaTimes size={20} /></button>
                 </div>
 
@@ -59,11 +80,29 @@ const ModeratorInboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete
                             </button>
                             <div className="details-content">
                                 <h4>{selectedMessage.subject}</h4>
+                                {selectedMessage.from && <p className="message-from">From: {selectedMessage.from}</p>}
                                 <p className="message-body-text">{selectedMessage.body}</p>
                                 <span className="details-date">
                                     Received: {new Date(selectedMessage.date).toLocaleString()}
                                 </span>
                             </div>
+                            {/* Reply form for resident messages */}
+                            {(selectedMessage.userId || selectedMessage.from.includes('Resident')) && selectedMessage.status !== 'replied' && !selectedMessage.subject.startsWith('Re:') && (
+                                <form className="inbox-reply-form" onSubmit={handleReplySubmit}>
+                                    <textarea
+                                        placeholder={`Reply to ${selectedMessage.from}...`}
+                                        value={replyText}
+                                        onChange={(e) => setReplyText(e.target.value)}
+                                        required
+                                    />
+                                    <button type="submit" className="send-reply-btn" disabled={!replyText.trim()}>
+                                        <FaReply /> Send Reply
+                                    </button>
+                                </form>
+                            )}
+                            {selectedMessage.status === 'replied' && (
+                                <p className="replied-indicator">You have replied to this message.</p>
+                            )}
                         </div>
                     ) : messages.length === 0 ? (
                         <div className="no-items-placeholder">
@@ -81,7 +120,10 @@ const ModeratorInboxModal = ({ isOpen, onClose, messages, onMarkAsRead, onDelete
                                 >
                                     <div className="message-icon"></div>
                                     <div className="message-summary">
-                                        <span className="message-title">{msg.subject}</span>
+                                        <span className="message-title">
+                                            {msg.subject}
+                                            {msg.status === 'replied' && <span className="replied-tag">Replied</span>}
+                                        </span>
                                         <span className="message-subtitle">{msg.body.substring(0, 80)}...</span>
                                     </div>
                                     <span className="message-date">

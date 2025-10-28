@@ -8,11 +8,40 @@ import {
 import "../styles/m-analytics-dashboard.css";
 
 const StatCard = ({ icon, label, value, color }) => (
-  <div className="stat-card" style={{ "--card-color": color }}>
-    <div className="stat-icon">{icon}</div>
+  <div className="stat-card">
+    <div className="stat-icon" style={{ color: color, background: 'rgba(0,0,0,0.05)' }}>{icon}</div>
     <div className="stat-info">
       <span className="stat-value">{value}</span>
       <span className="stat-label">{label}</span>
+    </div>
+  </div>
+);
+
+const StatCardSkeleton = () => (
+  <div className="stat-card skeleton-card">
+    <div className="skeleton skeleton-icon"></div>
+    <div className="stat-info">
+      <div className="skeleton skeleton-line skeleton-value"></div>
+      <div className="skeleton skeleton-line skeleton-label"></div>
+    </div>
+  </div>
+);
+
+const ChartSkeleton = () => (
+  <div className="chart-container skeleton-card">
+    <div className="skeleton skeleton-line skeleton-title" style={{ margin: '0 auto 1rem auto', width: '50%' }}></div>
+    <div className="skeleton skeleton-chart-area"></div>
+  </div>
+);
+
+const DashboardSkeleton = () => (
+  <div className="analytics-dashboard">
+    <div className="stats-grid">
+      {[...Array(8)].map((_, i) => <StatCardSkeleton key={i} />)}
+    </div>
+    <div className="charts-grid" style={{ marginTop: '1.25rem' }}>
+      <ChartSkeleton />
+      <ChartSkeleton />
     </div>
   </div>
 );
@@ -40,13 +69,13 @@ const ChartCard = ({ title, data }) => {
   return (
     <div className="chart-container">
       <h4>{title}</h4>
-      <ResponsiveContainer width="100%" height={180}>
-        <BarChart data={data} layout="horizontal" margin={{ top: 5, right: 20, left: 0, bottom: 40 }}>
+      <ResponsiveContainer width="100%" height={160}>
+        <BarChart data={data} layout="horizontal" margin={{ top: 5, right: 10, left: -10, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
-          <XAxis type="category" dataKey="name" tick={{ fontSize: 11 }} angle={-35} textAnchor="end" interval={0} />
-          <YAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
+          <XAxis type="category" dataKey="name" tick={{ fontSize: 10 }} angle={-35} textAnchor="end" interval={0} />
+          <YAxis type="number" allowDecimals={false} tick={{ fontSize: 10 }} />
           <Tooltip />
-          <Bar dataKey="count" barSize={25}>
+          <Bar dataKey="count" barSize={20}>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={getColor(entry.name)} />
             ))}
@@ -57,9 +86,13 @@ const ChartCard = ({ title, data }) => {
   );
 };
 
-const AnalyticsDashboard = ({ reports, requests }) => {
+const AnalyticsDashboard = ({ reports, requests, isLoading }) => {
   const [timeRange, setTimeRange] = useState('all'); // 'today', 'yesterday', 'this_week', 'last_week', 'this_month', 'last_month', 'all'
   const [showStats, setShowStats] = useState(true);
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   const filteredData = useMemo(() => {
     const now = new Date();

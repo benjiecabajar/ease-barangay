@@ -188,6 +188,7 @@
 
 .message-summary { flex-grow: 1; }
 .message-title { font-size: 15px; color: var(--text-secondary); }
+.message-title .replied-tag { margin-left: 8px; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 10px; background-color: var(--bg-tertiary); color: var(--text-tertiary); text-transform: uppercase; }
 .message-subtitle { display: block; font-size: 13px; color: var(--text-tertiary); font-weight: 400; margin-top: 2px; }
 .message-date { font-size: 13px; color: var(--text-tertiary); font-weight: 500; }
 
@@ -225,6 +226,13 @@
     color: var(--text-primary);
 }
 
+.message-from {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
 .message-body-text {
     white-space: pre-wrap; /* Respect newlines in the message body */
     line-height: 1.6;
@@ -237,6 +245,50 @@
     font-size: 0.8rem;
     color: var(--text-tertiary);
     text-align: right;
+}
+
+/* --- Reply Form --- */
+.inbox-reply-form {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-primary);
+}
+
+.inbox-reply-form textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.inbox-reply-form .send-reply-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--brand-primary);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.replied-indicator {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
 }
 
 /* --- Placeholder --- */

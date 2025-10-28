@@ -229,7 +229,26 @@
 }
 
 
+.moderator-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
 /* Re-use existing styles for other statuses and buttons */
+.moderator-actions .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px; /* Reduced for a more box-like shape */
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
 @keyframes fadeInOverlay {
     from { opacity: 0; backdrop-filter: blur(0px); }
     to { opacity: 1; backdrop-filter: blur(10px); }

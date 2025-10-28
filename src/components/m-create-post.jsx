@@ -1,19 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaTimes, FaSyncAlt, FaCheckCircle } from "react-icons/fa";
 import "../styles/moderator-home.css";
 import "../styles/m-create-post.css";
-
-const POST_CATEGORIES = [
-  'General',
-  'Event',
-  'Health Advisory',
-  'Safety Alert',
-  'Community Program',
-  'Traffic Update',
-  'Weather Alert',
-  'Maintenance Notice',
-  'Other',
-];
 
 const PostModal = ({
   isOpen,
@@ -31,6 +19,16 @@ const PostModal = ({
   category,
   setCategory,
 }) => {
+  const [postCategories, setPostCategories] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const systemSettings = JSON.parse(localStorage.getItem("system_settings")) || {};
+      const defaultCategories = ['General', 'Event', 'Health Advisory', 'Safety Alert', 'Community Program', 'Traffic Update', 'Weather Alert', 'Maintenance Notice', 'Other'];
+      setPostCategories(systemSettings.announcementCategories || defaultCategories);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // This function resets the form fields and closes the modal.
@@ -38,7 +36,7 @@ const PostModal = ({
     setTitle("");
     setDescription("");
     setImages([]);
-    setCategory(POST_CATEGORIES[0]); // Reset to default
+    setCategory('General'); // Reset to default
     onClose();
   };
 
@@ -70,7 +68,7 @@ const PostModal = ({
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                {POST_CATEGORIES.map(cat => (
+                {postCategories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>

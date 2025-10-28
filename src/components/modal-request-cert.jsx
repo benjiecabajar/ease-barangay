@@ -329,7 +329,7 @@ const RequestCertificationModal = ({ isOpen, onClose, onSubmit, submissionStatus
             {submissionStatus === 'submitting' && (
               <>
                 <div className="spinner"></div>
-                <p>Submitting your request...</p>
+                <p>Sending your request...</p>
               </>
             )}
             {submissionStatus === 'success' && (

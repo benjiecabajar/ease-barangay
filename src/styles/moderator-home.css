@@ -96,7 +96,7 @@
     padding: 12px 20px;
     font-weight: 500;
     animation: slideDownAndFadeIn 0.5s ease-out forwards;
-    border-radius: 30px; /* Pill shape */
+    border-radius: 12px; /* Box with rounded corners */
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     pointer-events: auto; /* Re-enable clicks on the banner itself */
     max-width: 90vw; /* Prevent it from getting too wide on small screens */
@@ -1220,7 +1220,7 @@
 /* ======================================================== */
 .event-modal-overlay {
   position: fixed;
-  top: 0;
+  top: 70px; /* Start below the main header */
   left: 0;
   right: 0;
   bottom: 0;
@@ -1229,7 +1229,8 @@
   -webkit-backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align to the top */
+  padding-top: 2rem;
   z-index: 1050; /* Higher than other modals */
 }
 
@@ -1239,6 +1240,7 @@
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
+  max-height: calc(100vh - 140px); /* Adjust height */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   position: relative; /* Needed for submission overlay */
   animation: fadeIn 0.3s ease-out;
