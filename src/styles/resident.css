@@ -36,6 +36,87 @@
   color: var(--text-primary);
 }
 
+@keyframes slideDownAndFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Broadcast Banner Styles */
+.broadcast-banner-container {
+    position: fixed;
+    top: 10px; /* Position from the top of the viewport */
+    left: 0;
+    right: 0;
+    z-index: 9999; /* Ensure it's on top of other content */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the banner horizontally */
+    pointer-events: none; /* Allow clicks to pass through the container */
+}
+.broadcast-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    font-weight: 500;
+    animation: slideDownAndFadeIn 0.5s ease-out forwards;
+    border-radius: 30px; /* Pill shape */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    pointer-events: auto; /* Re-enable clicks on the banner itself */
+    max-width: 90vw; /* Prevent it from getting too wide on small screens */
+}
+.broadcast-item p {
+    margin: 0;
+}
+.broadcast-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+    text-align: center;
+}
+.broadcast-message p {
+    font-size: 14px;
+    line-height: 1.4;
+}
+.broadcast-message strong {
+    display: none; /* Hide "Broadcast:" text for a cleaner look */
+}
+.broadcast-item.type-info { background-color: #eff6ff; color: #1e40af; }
+.broadcast-item.type-warning { background-color: #fffbeb; color: #92400e; }
+.broadcast-item.type-critical { background-color: #fee2e2; color: #991b1b; }
+
+.broadcast-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary); /* Change color to be more visible */
+    opacity: 0.7;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+    margin-left: 15px; /* Space between text and close button */
+}
+.broadcast-close-btn:hover { opacity: 1; background-color: rgba(0,0,0,0.1); border-radius: 50%; }
+
+
 /* Content Layout */
 .content {
   display: flex;
@@ -132,6 +213,7 @@
 .red { background: linear-gradient(135deg, #ef4444, #dc2626); }
 .green { background: linear-gradient(135deg, #22c55e, #16a34a); }
 .gray { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
 .soft-teal { background: linear-gradient(135deg, #4B77BE, #4B77BE ); }
 
 .sidebar-btn span {
@@ -259,7 +341,7 @@
 
 .post-category-badge {
     display: inline-block;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 12px;
     font-size: 11px;
     font-weight: 600;

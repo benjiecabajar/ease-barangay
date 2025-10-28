@@ -4,8 +4,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/login'
 import SignIn from './pages/sign_in'
 import ResidentHome from './pages/resident-home'
-import ModeratorHome from './pages/moderator-home'
-import AdminHome from './pages/admin_homepage'
+import ModeratorHome from './pages/moderator-home' 
+import AdminHome from './pages/admin-home'
 import OfflineScreen from './components/OfflineScreen'
 
 

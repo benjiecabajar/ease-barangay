@@ -54,10 +54,29 @@ function Login() {
     // ------------------------
 
     // (Optional) Add authentication logic here
-    
-    // Redirect on success
-    logAuditAction('User Logged In', { username });
-    navigate("/resident");
+    if (username.toLowerCase() === 'admin') {
+      const userProfile = { id: 'admin_user', name: 'Admin' };
+      localStorage.setItem('userProfile', JSON.stringify(userProfile));
+      logAuditAction('Admin Logged In', { username }, 'admin');
+      navigate("/admin");
+    } else if (username.toLowerCase() === 'moderator') {
+      const userProfile = { id: 'moderator_user', name: 'Moderator' };
+      localStorage.setItem('userProfile', JSON.stringify(userProfile));
+      logAuditAction('Moderator Logged In', { username }, 'moderator');
+      navigate("/moderator");
+    } else {
+      // For other users, create a profile. In a real app, you'd fetch this from a DB.
+      const userProfile = {
+        // Simple way to create a consistent ID from username for this example
+        id: `user_${username.toLowerCase().replace(/[^a-z0-9]/g, '')}`, 
+        name: username 
+      };
+      localStorage.setItem('userProfile', JSON.stringify(userProfile));
+
+      // Pass the role to the audit logger
+      logAuditAction('User Logged In', { username }, 'resident');
+      navigate("/resident-home");
+    }
   };
 
   return (

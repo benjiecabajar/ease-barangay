@@ -71,7 +71,18 @@ const SupportModal = ({ isOpen, onClose, onReportUser, initialReportedUser }) =>
     const handleReportSubmit = (e) => {
         e.preventDefault();
         if (reportedUserName.trim() && reportReason.trim()) {
-            onReportUser(reportedUserName, reportReason);
+            // Log for admin dispute resolution
+            const disputeReports = JSON.parse(localStorage.getItem('disputeReports')) || [];
+            const newDispute = {
+                reportId: `disp-${Date.now()}`,
+                reporter: 'Moderator', // In a real app, get current moderator's name
+                reportedUser: reportedUserName,
+                reason: reportReason,
+                date: Date.now(),
+                status: 'open',
+            };
+            localStorage.setItem('disputeReports', JSON.stringify([...disputeReports, newDispute]));
+
             setReportedUserName('');
             setReportReason('');
         }

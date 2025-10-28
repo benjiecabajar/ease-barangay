@@ -1,6 +1,6 @@
 // pages/Home.jsx
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Calendar from "react-calendar"; 
 import { useNavigate } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
@@ -21,6 +21,7 @@ import {
   FaEdit,
   FaExclamationTriangle,
   FaTrash,
+  FaBullhorn,
 } from "react-icons/fa";
 import { MdOutlineAssignment } from "react-icons/md";
 import CommentSection from "../components/comment-section.jsx";
@@ -63,17 +64,14 @@ function Home() {
   const [undoClearTimeoutId, setUndoClearTimeoutId] = useState(null);
   const [notificationClearStatus, setNotificationClearStatus] = useState(null);
   const [inboxClearStatus, setInboxClearStatus] = useState(null);
+  const timersRef = useRef({});
 
   // State for the new event view modal
   const [isViewEventsModalOpen, setIsViewEventsModalOpen] = useState(false);
   const [eventsForModal, setEventsForModal] = useState([]);
 
-  const POST_CATEGORIES = [
-      'General', 'Event', 'Health Advisory', 'Safety Alert', 
-      'Community Program', 'Traffic Update', 'Weather Alert', 
-      'Maintenance Notice', 'Other'
-  ];
-
+  const [broadcasts, setBroadcasts] = useState([]);
+  const [postCategories, setPostCategories] = useState([]);
   const navigate = useNavigate();
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -108,11 +106,18 @@ function Home() {
       setNotifications(JSON.parse(localStorage.getItem("notifications")) || []);
       setEvents(JSON.parse(localStorage.getItem('calendarEvents')) || []);
       setInboxMessages(JSON.parse(localStorage.getItem('residentInbox')) || []);
+      const allBroadcasts = JSON.parse(localStorage.getItem("systemBroadcasts")) || [];
+      const dismissedIds = JSON.parse(localStorage.getItem("dismissedBroadcasts")) || [];
+      const activeAndNotDismissed = allBroadcasts.filter(b => b.isActive && !dismissedIds.includes(b.id));
+      const systemSettings = JSON.parse(localStorage.getItem("system_settings")) || {};
+
+      setPostCategories(systemSettings.announcementCategories || ['General', 'Event', 'Other']);
+      setBroadcasts(activeAndNotDismissed);
     };
     loadData();
 
     const handleStorageChange = (e) => {
-      if (['announcements', 'userReports', 'notifications', 'calendarEvents', 'residentInbox'].includes(e.key)) {
+      if (['announcements', 'userReports', 'notifications', 'calendarEvents', 'residentInbox', 'systemBroadcasts'].includes(e.key)) {
         loadData();
       }
     };
@@ -120,6 +125,44 @@ function Home() {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  const handleCloseBroadcast = (broadcastId) => {
+    setBroadcasts(prev => prev.filter(b => b.id !== broadcastId)); // Remove from view
+    // Add to dismissed list in localStorage
+    const dismissedIds = JSON.parse(localStorage.getItem("dismissedBroadcasts")) || [];
+    if (!dismissedIds.includes(broadcastId)) {
+        localStorage.setItem("dismissedBroadcasts", JSON.stringify([...dismissedIds, broadcastId]));
+    }
+    // Clear any running timers for this broadcast
+    if (timersRef.current[broadcastId]) {
+        clearTimeout(timersRef.current[broadcastId].timerId);
+        delete timersRef.current[broadcastId];
+    }
+  };
+
+  // Auto-dismiss non-critical broadcasts after 10 seconds
+  useEffect(() => {
+    broadcasts.forEach(broadcast => {
+        if (broadcast.type !== 'critical' && !timersRef.current[broadcast.id]) {
+            timersRef.current[broadcast.id] = {
+                timerId: setTimeout(() => {
+                    handleCloseBroadcast(broadcast.id);
+                }, 10000), // 10 seconds
+                startTime: Date.now(),
+                remaining: 10000,
+            };
+        }
+    });
+
+    // Cleanup timers when component unmounts or broadcasts change
+    return () => {
+        Object.values(timersRef.current).forEach(timer => {
+            if (timer && timer.timerId) {
+                clearTimeout(timer.timerId);
+            }
+        });
+    };
+  }, [broadcasts]);
 
   // NEW: Effect to update current time every 30 seconds for live event checking
   useEffect(() => {
@@ -700,6 +743,26 @@ function Home() {
     );
   };
 
+  const handleBroadcastMouseEnter = (broadcastId) => {
+    const timer = timersRef.current[broadcastId];
+    if (timer) {
+        clearTimeout(timer.timerId);
+        const elapsedTime = Date.now() - timer.startTime;
+        timer.remaining -= elapsedTime;
+    }
+  };
+
+  const handleBroadcastMouseLeave = (broadcastId) => {
+    const timer = timersRef.current[broadcastId];
+    if (timer && timer.remaining > 0) {
+        timer.startTime = Date.now();
+        timer.timerId = setTimeout(() => {
+            handleCloseBroadcast(broadcastId);
+        }, timer.remaining);
+    }
+  };
+
+
   return (
     <ThemeProvider>
       <div className="home-page">
@@ -787,6 +850,24 @@ function Home() {
 
       {/* ✅ Using your Header.jsx */}
       <Header/>
+      {broadcasts.length > 0 && (
+        <div className="broadcast-banner-container">
+            {broadcasts.map(b => (
+                <div key={b.id} 
+                     className={`broadcast-item type-${b.type}`}
+                     onMouseEnter={() => handleBroadcastMouseEnter(b.id)}
+                     onMouseLeave={() => handleBroadcastMouseLeave(b.id)}
+                >
+                    <div className="broadcast-message">
+                      <FaBullhorn style={{ marginRight: '10px', flexShrink: 0 }} />
+                      <p><strong>Broadcast:</strong> {b.message}</p>
+                    </div>
+                    <button onClick={() => handleCloseBroadcast(b.id)} className="broadcast-close-btn"><FaTimes /></button>
+                </div>
+            ))}
+        </div>
+      )}
+
 
       <div className="content">
         {/* Left Sidebar */}
@@ -862,7 +943,7 @@ function Home() {
                   </select>
                   <select id="filter-category" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} title="Filter by category">
                     <option value="All">All Categories</option>
-                    {POST_CATEGORIES.map(cat => (
+                    {postCategories.map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>

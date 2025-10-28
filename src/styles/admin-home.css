@@ -1,0 +1,338 @@
+/* admin-home.css */
+
+:root {
+    --admin-bg: #f0f2f5;
+    --admin-card-bg: #ffffff;
+    --admin-text-primary: #1d2129;
+    --admin-text-secondary: #606770;
+    --admin-border: #ccd0d5;
+    --admin-primary-blue: #1877f2;
+    --admin-red: #fa383e;
+    --admin-yellow: #f5c33b;
+    --admin-green: #42b72a;
+    --admin-purple: #6f42c1; /* A nice, standard purple */
+}
+
+.admin-page {
+    background-color: var(--admin-bg);
+    min-height: 100vh;
+    font-family: "Poppins", sans-serif;
+}
+
+.admin-content {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.admin-main-content {
+    flex: 3;
+    background-color: var(--admin-card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.admin-main-content h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--admin-text-primary);
+    border-bottom: 1px solid var(--admin-border);
+    padding-bottom: 10px;
+}
+
+.admin-feed-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-feed-controls input,
+.admin-feed-controls select {
+    padding: 8px 12px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: var(--admin-bg);
+}
+
+.admin-feed-controls input {
+    width: 300px;
+}
+
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.admin-post-card {
+    background: #fff;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.post-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.post-card-header .author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.post-card-header div {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: 600;
+    color: var(--admin-text-primary);
+}
+
+.post-time {
+    font-size: 12px;
+    color: var(--admin-text-secondary);
+}
+
+.post-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.action-btn:hover { background-color: #f0f2f5; }
+.edit-btn { color: var(--admin-primary-blue); }
+.delete-btn { color: var(--admin-red); }
+
+.post-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.post-description {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--admin-text-primary);
+}
+
+.post-category-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 8px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.category-general { background-color: #6b7280; }
+.category-event { background-color: #8b5cf6; }
+.category-health-advisory { background-color: #0ea5e9; }
+.category-safety-alert { background-color: #f97316; }
+.category-community-program { background-color: #10b981; }
+.category-traffic-update { background-color: #f59e0b; }
+
+.admin-right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.admin-widget {
+    background-color: var(--admin-card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.admin-widget h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.admin-widget p {
+    font-size: 14px;
+    color: var(--admin-text-secondary);
+    margin-bottom: 15px;
+}
+
+.admin-widget button {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--admin-primary-blue);
+    color: white;
+font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.admin-widget button:hover { background-color: #166fe5; }
+
+/* Modal Styles */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.admin-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--admin-border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-modal-body {
+    overflow-y: auto;
+}
+
+.admin-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Audit Log Specific */
+.audit-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.audit-filters input, .audit-filters select {
+    padding: 8px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+}
+
+.audit-log-list { list-style: none; padding: 0; }
+.log-item {
+    padding: 10px;
+    border-bottom: 1px solid var(--admin-border);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+.log-main-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+.log-item:last-child { border-bottom: none; }
+.log-timestamp { font-size: 12px; color: var(--admin-text-secondary); }
+.log-actor { font-weight: 500; font-size: 14px; }
+.log-action { font-style: italic; font-size: 15px; }
+.log-details-container {
+    text-align: right;
+}
+.log-details-container summary { cursor: pointer; font-size: 12px; }
+.log-details-container pre { background-color: #f0f2f5; padding: 5px; border-radius: 4px; font-size: 11px; text-align: left; margin-top: 5px; }
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--admin-border);
+}
+
+.pagination-controls button {
+    padding: 6px 12px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    background-color: var(--admin-card-bg);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination-controls button:hover:not(:disabled) { background-color: var(--admin-bg); }
+.pagination-controls button:disabled { cursor: not-allowed; opacity: 0.5; }
+
+.jump-to-page {
+    display: flex;
+    gap: 5px;
+}
+
+.jump-to-page input {
+    width: 70px;
+    padding: 6px 10px;
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+}
+
+/* Remove number input spinners for a cleaner look */
+.jump-to-page input::-webkit-outer-spin-button,
+.jump-to-page input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.jump-to-page input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+}
+
+/* Broadcast Specific */
+.broadcast-form { margin-bottom: 20px; }
+.broadcast-form textarea { width: 100%; min-height: 80px; padding: 8px; border-radius: 6px; border: 1px solid var(--admin-border); margin-bottom: 10px; }
+.broadcast-form select { padding: 8px; border-radius: 6px; margin-right: 10px; }
+.broadcast-list .broadcast-item { padding: 10px; border-radius: 6px; margin-bottom: 10px; }
+.broadcast-item.type-info { border-left: 4px solid var(--admin-primary-blue); background-color: #e7f3ff; }
+.broadcast-item.type-warning { border-left: 4px solid var(--admin-yellow); background-color: #fffbe2; }
+.broadcast-item.type-critical { border-left: 4px solid var(--admin-red); background-color: #ffeded; }
+.broadcast-item.inactive { opacity: 0.6; }
+.broadcast-actions { display: flex; align-items: center; gap: 10px; margin-top: 5px; font-size: 12px; }
+.broadcast-actions button { font-size: 12px; padding: 4px 8px; }
+.broadcast-actions button.delete { background-color: var(--admin-red); }

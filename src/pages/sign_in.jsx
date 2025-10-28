@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/login.css";
 import "../styles/sign_in.css";
@@ -52,6 +52,7 @@ export default function SignIn() {
     barangay: "",
   });
 
+  const [locations, setLocations] = useState({});
   const [errors, setErrors] = useState({});
   const [notification, setNotification] = useState("");
   const [signupStatus, setSignupStatus] = useState(null); // To show confirmation screen
@@ -61,20 +62,18 @@ export default function SignIn() {
   // NEW STATE: Tracks if the user has manually changed the username
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedMunicipality, setSelectedMunicipality] = useState('');
 
-  const barangays = [
-    "Balacanas",
-    "Dayawan",
-    "Imelda",
-    "Katipunan",
-    "Kimaya",
-    "Looc",
-    "Poblacion 1",
-    "Poblacion 2",
-    "Poblacion 3",
-    "San Martin",
-    "Tambobong",
-  ];
+  // Load location data from system settings on component mount
+  useEffect(() => {
+    const systemSettings = JSON.parse(localStorage.getItem("system_settings"));
+    if (systemSettings && systemSettings.locations) {
+      setLocations(systemSettings.locations);
+    } else {
+      // Fallback if settings are not found
+      setLocations({ "Villanueva": ["Poblacion 1", "Poblacion 2", "Poblacion 3"] });
+    }
+  }, []);
 
   // Function to validate the email format 
   const validateEmail = (email) => 
@@ -87,6 +86,12 @@ export default function SignIn() {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
     if (name !== 'terms') setErrors((prevErrors) => ({ ...prevErrors, terms: false }));
     setNotification("");
+
+    if (name === 'municipality') {
+        setSelectedMunicipality(value);
+        // Reset barangay when municipality changes
+        setForm(prev => ({ ...prev, barangay: '', [name]: value }));
+    }
     
     const newForm = { ...form, [name]: value };
     setForm(newForm);
@@ -269,6 +274,21 @@ export default function SignIn() {
         // --- SIMULATION of a successful API call ---
         await new Promise(resolve => setTimeout(resolve, 1500));
         console.log("Simulated registration successful.");
+
+        // Save user to a centralized 'users' list in localStorage
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const newUser = {
+          id: `user-${Date.now()}`,
+          username: form.username,
+          email: form.email,
+          password: form.password, // In a real app, this would be hashed and not stored client-side
+          role: 'resident',
+          status: 'active', // 'active', 'suspended', 'deactivated'
+          verified: false, // Email verification status
+          ...form // include other form details like name, dob, etc.
+        };
+        localStorage.setItem('users', JSON.stringify([...users, newUser]));
+
         // --- END SIMULATION ---
 
         logAuditAction(
@@ -364,7 +384,14 @@ export default function SignIn() {
 
         <div className="info-inputs form-category">
             <h4 className="form-category-header">Location</h4>
-            <div className="input-container"> <FaMapMarkerAlt className="input-icon" /> <select name="barangay" value={form.barangay} onChange={handleChange} className={errors.barangay ? "error-input" : ""}> <option value="">Select Barangay</option> {barangays.map((brgy, index) => ( <option key={index} value={brgy}>{brgy}</option> ))} </select> </div>
+            <div className="input-container">
+                <FaMapMarkerAlt className="input-icon" />
+                <select name="municipality" value={selectedMunicipality} onChange={handleChange} className={errors.municipality ? "error-input" : ""}>
+                    <option value="">Select City/Municipality</option>
+                    {Object.keys(locations).map(mun => <option key={mun} value={mun}>{mun}</option>)}
+                </select>
+            </div>
+            <div className="input-container"> <FaMapMarkerAlt className="input-icon" /> <select name="barangay" value={form.barangay} onChange={handleChange} className={errors.barangay ? "error-input" : ""} disabled={!selectedMunicipality}> <option value="">Select Barangay</option> {(locations[selectedMunicipality] || []).map((brgy) => ( <option key={brgy} value={brgy}>{brgy}</option> ))} </select> </div>
         </div>
 
 

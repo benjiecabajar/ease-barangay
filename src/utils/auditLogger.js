@@ -10,13 +10,15 @@ export const logAuditAction = (action, details = {}, role = 'system') => {
     const auditLogs = JSON.parse(localStorage.getItem(logKey)) || [];
     
     const userProfile = JSON.parse(localStorage.getItem('userProfile'));
-    // Use the role from the profile if available, otherwise fallback to the passed role or 'System'
-    const username = userProfile?.name || (role === 'system' ? 'System/Unknown' : 'User');
+    const actor = role === 'admin' ? 'Admin' : (userProfile?.name || 'System/Unknown');
+    const userId = role === 'admin' ? 'admin_user' : (userProfile?.id || 'system');
 
     const newLogEntry = {
       id: Date.now(),
-      timestamp: new Date().toISOString(),
-      user: username,
+      timestamp: Date.now(),
+      actor: actor,
+      userId: userId,
+      role: role,
       action,
       details,
     };

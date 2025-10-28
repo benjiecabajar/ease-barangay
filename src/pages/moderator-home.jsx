@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Calendar from "react-calendar"; 
 import { useNavigate, Link } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
 import "../styles/moderator-home.css";
 // Import only icons needed in ModeratorHome (sidebar, posts, modals, etc.)
-import { FaUser, FaPlus, FaFileAlt, FaChartBar, FaInfoCircle, FaCog, FaTimes, FaChevronLeft, FaChevronRight, FaEllipsisH, FaBell, FaEdit, FaTrash, FaHeadset, FaSyncAlt, FaCheckCircle, FaInbox, FaExclamationTriangle } from "react-icons/fa";
+import { FaUser, FaPlus, FaFileAlt, FaChartBar, FaInfoCircle, FaCog, FaTimes, FaChevronLeft, FaChevronRight, FaEllipsisH, FaBell, FaEdit, FaTrash, FaHeadset, FaSyncAlt, FaCheckCircle, FaInbox, FaExclamationTriangle, FaBullhorn } from "react-icons/fa";
 import { MdOutlineAssignment } from "react-icons/md"; 
 import ReviewCertsModal from "../components/m-review-certs.jsx";
 import ReportUserModal from "../components/m-report-user-modal.jsx";
@@ -44,7 +44,7 @@ const MainContentFeed = ({ posts, handleDeletePost, handleEditClick, renderPostI
                                 {post.category && (
                                     <span className={`post-category-badge ${getCategoryClass(post.category)}`}>{post.category}</span>
                                 )}
-                              {new Date(post.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                                {new Date(post.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
                             </span>
                         </div>
                             <div className="post-actions-container">
@@ -105,6 +105,8 @@ const MainContentFeed = ({ posts, handleDeletePost, handleEditClick, renderPostI
 // =========================================================
 function ModeratorHome() { 
     const [posts, setPosts] = useState([]);
+    const timersRef = useRef({});
+    const [broadcasts, setBroadcasts] = useState([]);
     const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -114,11 +116,7 @@ function ModeratorHome() {
     const [sortOrder, setSortOrder] = useState('newest');
     const [filterCategory, setFilterCategory] = useState('All');
 
-    const POST_CATEGORIES = [
-        'General', 'Event', 'Health Advisory', 'Safety Alert', 
-        'Community Program', 'Traffic Update', 'Weather Alert', 
-        'Maintenance Notice', 'Other'
-    ];
+    const [postCategories, setPostCategories] = useState([]);
 
     const getCategoryClass = (categoryName) => {
         if (!categoryName) return 'category-general';
@@ -194,11 +192,18 @@ function ModeratorHome() {
             setCertificationRequests(JSON.parse(localStorage.getItem("certificationRequests")) || []);
             setEvents(JSON.parse(localStorage.getItem("calendarEvents")) || []);
             setModeratorInbox(JSON.parse(localStorage.getItem("moderatorInbox")) || []);
+            const allBroadcasts = JSON.parse(localStorage.getItem("systemBroadcasts")) || [];
+            const dismissedIds = JSON.parse(localStorage.getItem("dismissedBroadcasts")) || [];
+            const activeAndNotDismissed = allBroadcasts.filter(b => b.isActive && !dismissedIds.includes(b.id));
+            const systemSettings = JSON.parse(localStorage.getItem("system_settings")) || {};
+
+            setPostCategories(systemSettings.announcementCategories || ['General', 'Event', 'Other']);
+            setBroadcasts(activeAndNotDismissed);
         };
         loadData();
 
         const handleStorageChange = (e) => {
-            if (['announcements', 'userReports', 'moderatorNotifications', 'certificationRequests', 'calendarEvents', 'moderatorInbox'].includes(e.key)) {
+            if (['announcements', 'userReports', 'moderatorNotifications', 'certificationRequests', 'calendarEvents', 'moderatorInbox', 'systemBroadcasts'].includes(e.key)) {
                 loadData();
             }
         };
@@ -275,6 +280,44 @@ function ModeratorHome() {
         const intervalId = setInterval(cleanupEvents, 60000); // Run every 60 seconds
         return () => clearInterval(intervalId); // Cleanup on unmount
     }, [cleanupEvents]);
+
+    const handleCloseBroadcast = (broadcastId) => {
+        setBroadcasts(prev => prev.filter(b => b.id !== broadcastId)); // Remove from view
+        // Add to dismissed list in localStorage
+        const dismissedIds = JSON.parse(localStorage.getItem("dismissedBroadcasts")) || [];
+        if (!dismissedIds.includes(broadcastId)) {
+            localStorage.setItem("dismissedBroadcasts", JSON.stringify([...dismissedIds, broadcastId]));
+        }
+        // Clear any running timers for this broadcast
+        if (timersRef.current[broadcastId]) {
+            clearTimeout(timersRef.current[broadcastId].timerId);
+            delete timersRef.current[broadcastId];
+        }
+    };
+
+    // Auto-dismiss non-critical broadcasts after 10 seconds
+    useEffect(() => {
+        broadcasts.forEach(broadcast => {
+            if (broadcast.type !== 'critical' && !timersRef.current[broadcast.id]) {
+                timersRef.current[broadcast.id] = {
+                    timerId: setTimeout(() => {
+                        handleCloseBroadcast(broadcast.id);
+                    }, 10000), // 10 seconds
+                    startTime: Date.now(),
+                    remaining: 10000,
+                };
+            }
+        });
+
+        // Cleanup timers when component unmounts or broadcasts change
+        return () => {
+            Object.values(timersRef.current).forEach(timer => {
+                if (timer && timer.timerId) {
+                    clearTimeout(timer.timerId);
+                }
+            });
+        };
+    }, [broadcasts]);
 
     const handlePost = () => {
         setPostSubmissionStatus('saving');
@@ -865,6 +908,27 @@ function ModeratorHome() {
         );
     };
 
+    const handleBroadcastMouseEnter = (broadcastId) => {
+        const timer = timersRef.current[broadcastId];
+        if (timer) {
+            clearTimeout(timer.timerId);
+            const elapsedTime = Date.now() - timer.startTime;
+            timer.remaining -= elapsedTime;
+        }
+    };
+
+    const handleBroadcastMouseLeave = (broadcastId) => {
+        const timer = timersRef.current[broadcastId];
+        if (timer && timer.remaining > 0) {
+            timer.startTime = Date.now();
+            timer.timerId = setTimeout(() => {
+                handleCloseBroadcast(broadcastId);
+            }, timer.remaining);
+        }
+    };
+
+
+
     // Calculate the number of new reports to show in the badge
     const newReportsCount = allReports.filter(report => report.status === 'submitted').length;
 
@@ -993,6 +1057,24 @@ function ModeratorHome() {
 
             {/* Use the new Header Component */}
             <Header /> 
+            {broadcasts.length > 0 && (
+                <div className="broadcast-banner-container">
+                    {broadcasts.map(b => (
+                        <div key={b.id} 
+                             className={`broadcast-item type-${b.type}`}
+                             onMouseEnter={() => handleBroadcastMouseEnter(b.id)}
+                             onMouseLeave={() => handleBroadcastMouseLeave(b.id)}
+                        >
+                            <div className="broadcast-message">
+                                <FaBullhorn style={{ marginRight: '10px', flexShrink: 0 }} />
+                                <p><strong>Broadcast:</strong> {b.message}</p>
+                            </div>
+                            <button onClick={() => handleCloseBroadcast(b.id)} className="broadcast-close-btn"><FaTimes /></button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
 
             <div className="content">
                 {/* Left Sidebar */}
@@ -1103,7 +1185,7 @@ function ModeratorHome() {
                                 </select>
                                 <select id="filter-category" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} title="Filter by category">
                                     <option value="All">All Categories</option>
-                                    {POST_CATEGORIES.map(cat => (
+                                    {postCategories.map(cat => (
                                         <option key={cat} value={cat}>{cat}</option>
                                     ))}
                                 </select>
